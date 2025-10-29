@@ -1,0 +1,36 @@
+# ============================
+# Agentic Research Pipeline – Requirements
+# ============================
+
+# Core Python utilities
+python-dotenv==1.0.1
+PyYAML==6.0.2
+
+# Model and NLP backend (Qwen + Transformers)
+transformers>=4.44.0
+torch>=2.3.0
+accelerate>=0.30.1
+sentencepiece
+protobuf
+
+# PDF & text processing
+pdfplumber==0.11.2
+PyMuPDF==1.24.7
+pandas>=2.2.2
+
+# Image handling (for charts/graphs placeholders)
+Pillow==10.3.0
+
+# Logging and testing
+pytest==8.3.2
+pytest-asyncio==0.23.6
+
+# HTTP utilities (if model or resources fetched online)
+httpx==0.27.0
+
+# JSON/YAML & CLI utilities
+tqdm==4.66.4
+rich==13.7.1
+
+# Optional (for converting text to PDF or markdown output)
+pypandoc==1.13

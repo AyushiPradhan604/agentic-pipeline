@@ -1,0 +1,110 @@
+# ============================================================
+# Agentic Research Pipeline - Configuration File
+# Author: Ayushi Pradhan
+# Purpose: Define model, prompt templates, I/O directories, and runtime settings
+# ============================================================
+
+# ---------------------------
+# MODEL SETTINGS
+# ---------------------------
+models:
+  base_path: "agentic_research_pipeline/Qwen1.5-0.5B-Chat"   # Local model folder path
+  device: "cpu"                                               # Change to 'cuda' if GPU is available
+  dtype: "float32"                                            # For CPU-safe inference
+  max_new_tokens: 1024
+  temperature: 0.3
+  top_p: 0.9
+  use_fp16: false
+  tokenizer_padding_side: "left"
+
+  # Assign the same local model to all three agents
+  section_identifier: "agentic_research_pipeline/Qwen1.5-0.5B-Chat"
+  summarizer: "agentic_research_pipeline/Qwen1.5-0.5B-Chat"
+  core_idea_extractor: "agentic_research_pipeline/Qwen1.5-0.5B-Chat"
+
+# ---------------------------
+# FILE PATHS
+# ---------------------------
+paths:
+  input_dir: "data/samples"
+  temp_dir: "data/temp"
+  output_dir: "data/outputs"
+  image_dir: "data/temp/images"
+  log_dir: "logs"
+
+# ---------------------------
+# SECTIONS TO IDENTIFY
+# ---------------------------
+sections:
+  - Abstract
+  - Introduction
+  - Motivation
+  - Related Work
+  - Methodology
+  - Experiments
+  - Results
+  - Discussion
+  - Conclusion
+
+# ---------------------------
+# AGENT PROMPTS
+# ---------------------------
+prompts:
+
+  section_identifier:
+    system: |
+      You are an AI assistant that identifies different sections in research papers.
+      Typical sections include:
+      - Abstract
+      - Introduction
+      - Motivation / Related Work
+      - Dataset / Experimental Setup
+      - Methodology
+      - Results & Discussion
+      - Ablation / Conclusion
+    instruction: |
+      Given the raw text of a research paper, detect and extract each section’s content.
+      Use JSON format with section titles as keys and text as values.
+
+  summarizer_agent:
+    system: |
+      You are a concise scientific summarizer.
+      Your goal is to create bullet points for each section while keeping all figure references (e.g., <<Figure_1.png>>) intact.
+    instruction: |
+      Summarize the section into clear bullet points. Maintain technical precision and keep placeholders unchanged.
+      Output should be in the following structure:
+      {
+        "section": "<section_name>",
+        "bullets": [
+          "- point 1",
+          "- point 2",
+          ...
+        ],
+        "images": ["<<Figure_1.png>>", "<<Figure_2.png>>"]
+      }
+
+  poster_formatter:
+    system: |
+      You are a poster layout designer for scientific papers.
+      Combine summarized sections into a structured format suitable for research poster presentations.
+    instruction: |
+      Combine all sections into a single cohesive structure.
+      Ensure the order is logical: Abstract → Introduction → Methodology → Results → Conclusion.
+      Preserve bullet formatting and image placeholders.
+      Output JSON format with a top-level key "poster_structure".
+
+# ---------------------------
+# LOGGING
+# ---------------------------
+logging:
+  level: "INFO"
+  save_to_file: true
+  log_file: "logs/pipeline.log"
+
+# ---------------------------
+# PIPELINE SETTINGS
+# ---------------------------
+pipeline:
+  run_mode: "single"          # 'single' or 'batch'
+  save_intermediate: true
+  overwrite_existing: true

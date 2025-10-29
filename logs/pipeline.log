@@ -1,0 +1,475 @@
+2025-10-29 23:01:07,204 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-29 23:01:07,206 - main - INFO - 📄 Input file: samples/tronarp22a_ICML.pdf
+2025-10-29 23:01:07,210 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-29 23:01:07,218 - main - ERROR - ❌ Pipeline execution failed: name 'SectionIdentifierAgent' is not defined
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 55, in main
+    pipeline = PipelineManager(config_path=args.config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 36, in __init__
+    self.section_identifier = SectionIdentifierAgent(self.config)
+                              ^^^^^^^^^^^^^^^^^^^^^^
+NameError: name 'SectionIdentifierAgent' is not defined
+2025-10-29 23:01:50,788 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-29 23:01:50,789 - main - INFO - 📄 Input file: samples/tronarp22a_ICML.pdf
+2025-10-29 23:01:50,791 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-29 23:01:50,799 - main - ERROR - ❌ Pipeline execution failed: expected str, bytes or os.PathLike object, not dict
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 55, in main
+    pipeline = PipelineManager(config_path=args.config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 36, in __init__
+    self.section_identifier = SectionIdentifier(self.config)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\section_identifier.py", line 18, in __init__
+    with open(config_path, "r", encoding="utf-8") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: expected str, bytes or os.PathLike object, not dict
+2025-10-29 23:15:54,376 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-29 23:15:54,379 - main - INFO - 📄 Input file: samples/tronarp22a_ICML.pdf
+2025-10-29 23:15:54,381 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-29 23:15:54,408 - main - ERROR - ❌ Pipeline execution failed: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'agentic_research_pipeline\Qwen1.5-0.5B-Chat'.
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 479, in cached_files
+    hf_hub_download(
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_validators.py", line 106, in _inner_fn
+    validate_repo_id(arg_value)
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_validators.py", line 160, in validate_repo_id
+    raise HFValidationError(
+huggingface_hub.errors.HFValidationError: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'agentic_research_pipeline\Qwen1.5-0.5B-Chat'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 55, in main
+    pipeline = PipelineManager(config_path=args.config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 36, in __init__
+    self.section_identifier = SectionIdentifier(config_path)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\section_identifier.py", line 30, in __init__
+    self.tokenizer = AutoTokenizer.from_pretrained(self.model_path, trust_remote_code=True)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\models\auto\tokenization_auto.py", line 1073, in from_pretrained
+    tokenizer_config = get_tokenizer_config(pretrained_model_name_or_path, **kwargs)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\models\auto\tokenization_auto.py", line 905, in get_tokenizer_config
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 322, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 531, in cached_files
+    resolved_files = [
+                     ^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 532, in <listcomp>
+    _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision, repo_type)
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 143, in _get_cache_file_to_return
+    resolved_file = try_to_load_from_cache(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_validators.py", line 106, in _inner_fn
+    validate_repo_id(arg_value)
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_validators.py", line 160, in validate_repo_id
+    raise HFValidationError(
+huggingface_hub.errors.HFValidationError: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'agentic_research_pipeline\Qwen1.5-0.5B-Chat'.
+2025-10-29 23:17:50,738 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-29 23:17:50,741 - main - INFO - 📄 Input file: samples/tronarp22a_ICML.pdf
+2025-10-29 23:17:50,748 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-29 23:17:50,771 - main - ERROR - ❌ Pipeline execution failed: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'agentic_research_pipeline\Qwen1.5-0.5B-Chat'.
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 479, in cached_files
+    hf_hub_download(
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_validators.py", line 106, in _inner_fn
+    validate_repo_id(arg_value)
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_validators.py", line 160, in validate_repo_id
+    raise HFValidationError(
+huggingface_hub.errors.HFValidationError: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'agentic_research_pipeline\Qwen1.5-0.5B-Chat'.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 55, in main
+    pipeline = PipelineManager(config_path=args.config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 36, in __init__
+    self.section_identifier = SectionIdentifier(config_path)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\section_identifier.py", line 30, in __init__
+    self.tokenizer = AutoTokenizer.from_pretrained(self.model_path, trust_remote_code=True)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\models\auto\tokenization_auto.py", line 1073, in from_pretrained
+    tokenizer_config = get_tokenizer_config(pretrained_model_name_or_path, **kwargs)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\models\auto\tokenization_auto.py", line 905, in get_tokenizer_config
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 322, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 531, in cached_files
+    resolved_files = [
+                     ^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 532, in <listcomp>
+    _get_cache_file_to_return(path_or_repo_id, filename, cache_dir, revision, repo_type)
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 143, in _get_cache_file_to_return
+    resolved_file = try_to_load_from_cache(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_validators.py", line 106, in _inner_fn
+    validate_repo_id(arg_value)
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_validators.py", line 160, in validate_repo_id
+    raise HFValidationError(
+huggingface_hub.errors.HFValidationError: Repo id must use alphanumeric chars, '-', '_' or '.'. The name cannot start or end with '-' or '.' and the maximum length is 96: 'agentic_research_pipeline\Qwen1.5-0.5B-Chat'.
+2025-10-29 23:25:14,848 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-29 23:25:14,849 - main - INFO - 📄 Input file: samples/tronarp22a_ICML.pdf
+2025-10-29 23:25:14,853 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-29 23:25:17,291 - main - ERROR - ❌ Pipeline execution failed: agentic_research_pipeline/Qwen1.5-0.5B-Chat is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'
+If this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_http.py", line 402, in hf_raise_for_status
+    response.raise_for_status()
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\requests\models.py", line 1026, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 401 Client Error: Unauthorized for url: https://huggingface.co/agentic_research_pipeline/Qwen1.5-0.5B-Chat/resolve/main/tokenizer_config.json
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 479, in cached_files
+    hf_hub_download(
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\file_download.py", line 1007, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\file_download.py", line 1114, in _hf_hub_download_to_cache_dir
+    _raise_on_head_call_error(head_call_error, force_download, local_files_only)
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\file_download.py", line 1655, in _raise_on_head_call_error
+    raise head_call_error
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\file_download.py", line 1543, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\file_download.py", line 1460, in get_hf_file_metadata
+    r = _request_wrapper(
+        ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\file_download.py", line 283, in _request_wrapper
+    response = _request_wrapper(
+               ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\file_download.py", line 307, in _request_wrapper
+    hf_raise_for_status(response)
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\huggingface_hub\utils\_http.py", line 452, in hf_raise_for_status
+    raise _format(RepositoryNotFoundError, message, response) from e
+huggingface_hub.errors.RepositoryNotFoundError: 401 Client Error. (Request ID: Root=1-69025505-0560c06042a0212b1a8cb7bd;33c62df8-6c52-4f94-b606-0887b9f3b44e)
+
+Repository Not Found for url: https://huggingface.co/agentic_research_pipeline/Qwen1.5-0.5B-Chat/resolve/main/tokenizer_config.json.
+Please make sure you specified the correct `repo_id` and `repo_type`.
+If you are trying to access a private or gated repo, make sure you are authenticated. For more details, see https://huggingface.co/docs/huggingface_hub/authentication
+Invalid username or password.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 55, in main
+    pipeline = PipelineManager(config_path=args.config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 36, in __init__
+    self.section_identifier = SectionIdentifier(config_path)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\section_identifier.py", line 31, in __init__
+    self.tokenizer = AutoTokenizer.from_pretrained(self.model_path, trust_remote_code=True)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\models\auto\tokenization_auto.py", line 1073, in from_pretrained
+    tokenizer_config = get_tokenizer_config(pretrained_model_name_or_path, **kwargs)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\models\auto\tokenization_auto.py", line 905, in get_tokenizer_config
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 322, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\transformers\utils\hub.py", line 511, in cached_files
+    raise OSError(
+OSError: agentic_research_pipeline/Qwen1.5-0.5B-Chat is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'
+If this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`
+2025-10-29 23:33:13,977 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-29 23:33:13,980 - main - INFO - 📄 Input file: samples/tronarp22a_ICML.pdf
+2025-10-29 23:33:13,982 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-29 23:33:38,206 - main - ERROR - ❌ Pipeline execution failed: 'sections'
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 55, in main
+    pipeline = PipelineManager(config_path=args.config)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 36, in __init__
+    self.section_identifier = SectionIdentifier(config_path)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\section_identifier.py", line 40, in __init__
+    self.target_sections = self.config["sections"]
+                           ~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'sections'
+2025-10-29 23:37:30,522 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-29 23:37:30,525 - main - INFO - 📄 Input file: samples/tronarp22a_ICML.pdf
+2025-10-29 23:37:30,529 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-29 23:38:18,834 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-10-29 23:38:18,907 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: samples/tronarp22a_ICML.pdf
+2025-10-29 23:38:18,912 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections...
+2025-10-29 23:38:18,918 - main - ERROR - ❌ Pipeline execution failed: 'SectionIdentifier' object has no attribute 'process'
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 56, in main
+    final_output = pipeline.run_pipeline(args.pdf)  # <-- fixed method name
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 50, in run_pipeline
+    sections = self.section_identifier.process(input_pdf_path)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'SectionIdentifier' object has no attribute 'process'
+2025-10-29 23:54:09,755 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-29 23:54:09,758 - main - INFO - 📄 Input file: samples/tronarp22a_ICML.pdf
+2025-10-29 23:54:09,760 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-29 23:54:56,578 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-10-29 23:54:56,622 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: samples/tronarp22a_ICML.pdf
+2025-10-29 23:54:56,627 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections...
+2025-10-29 23:54:56,701 - main - ERROR - ❌ Pipeline execution failed: no such file: 'samples/tronarp22a_ICML.pdf'
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 56, in main
+    final_output = pipeline.run_pipeline(args.pdf)  # <-- fixed method name
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 50, in run_pipeline
+    sections = self.section_identifier.process(input_pdf_path)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\section_identifier.py", line 51, in process
+    raw_text = extract_text_from_pdf(pdf_path)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\utils\pdf_parser.py", line 63, in extract_text_from_pdf
+    return parser.extract_text(pdf_path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\utils\pdf_parser.py", line 20, in extract_text
+    with fitz.open(pdf_path) as doc:
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\pymupdf\__init__.py", line 2756, in __init__
+    raise FileNotFoundError(msg)
+pymupdf.FileNotFoundError: no such file: 'samples/tronarp22a_ICML.pdf'
+2025-10-30 00:00:06,081 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-30 00:00:06,084 - main - INFO - 📄 Input file: samples/tronarp22a_ICML.pdf
+2025-10-30 00:00:06,086 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-30 00:01:07,422 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-10-30 00:01:07,479 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: samples/tronarp22a_ICML.pdf
+2025-10-30 00:01:07,482 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections...
+2025-10-30 00:01:07,535 - main - ERROR - ❌ Pipeline execution failed: no such file: 'samples/tronarp22a_ICML.pdf'
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 56, in main
+    final_output = pipeline.run_pipeline(args.pdf)  # <-- fixed method name
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 50, in run_pipeline
+    sections = self.section_identifier.process(input_pdf_path)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\section_identifier.py", line 51, in process
+    raw_text = extract_text_from_pdf(pdf_path)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\utils\pdf_parser.py", line 63, in extract_text_from_pdf
+    return parser.extract_text(pdf_path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\utils\pdf_parser.py", line 20, in extract_text
+    with fitz.open(pdf_path) as doc:
+         ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\anaconda3\Lib\site-packages\pymupdf\__init__.py", line 2756, in __init__
+    raise FileNotFoundError(msg)
+pymupdf.FileNotFoundError: no such file: 'samples/tronarp22a_ICML.pdf'
+2025-10-30 00:01:51,271 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-30 00:01:51,272 - main - INFO - 📄 Input file: data/samples/tronarp22a_ICML.pdf
+2025-10-30 00:01:51,275 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-30 00:02:33,265 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-10-30 00:02:33,300 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: data/samples/tronarp22a_ICML.pdf
+2025-10-30 00:02:33,302 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections...
+2025-10-30 00:03:26,052 - pipeline.pipeline_manager - INFO - ✅ Extracted sections: ['a\nb\nc\nd', 'odin\nrk\nfenrir', 's\ne\ni\nr', 'rk\nfenrir', 'a\nb\nc\nd\ne\nrk\nfenrir', 'siam']
+2025-10-30 00:03:26,075 - pipeline.pipeline_manager - INFO - 🔹 Step 2: Summarizing sections...
+2025-10-30 00:03:26,077 - pipeline.pipeline_manager - INFO -    → Summarizing section: a
+b
+c
+d
+2025-10-30 00:03:34,628 - pipeline.pipeline_manager - INFO -    → Summarizing section: odin
+rk
+fenrir
+2025-10-30 00:03:41,595 - pipeline.pipeline_manager - INFO -    → Summarizing section: s
+e
+i
+r
+2025-10-30 00:03:46,391 - pipeline.pipeline_manager - INFO -    → Summarizing section: rk
+fenrir
+2025-10-30 00:03:47,354 - pipeline.pipeline_manager - INFO -    → Summarizing section: a
+b
+c
+d
+e
+rk
+fenrir
+2025-10-30 00:03:48,104 - pipeline.pipeline_manager - INFO -    → Summarizing section: siam
+2025-10-30 00:03:48,814 - pipeline.pipeline_manager - INFO - ✅ All sections summarized successfully.
+2025-10-30 00:03:48,815 - pipeline.pipeline_manager - INFO - 🔹 Step 3: Formatting final poster output...
+2025-10-30 00:03:48,823 - main - ERROR - ❌ Pipeline execution failed: string indices must be integers, not 'str'
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 56, in main
+    final_output = pipeline.run_pipeline(args.pdf)  # <-- fixed method name
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 63, in run_pipeline
+    poster_output = self.poster_formatter.format_for_poster(summarized_sections)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\poster_formatter.py", line 45, in format_for_poster
+    combined_text = self._build_structured_text(summarized_sections)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\poster_formatter.py", line 66, in _build_structured_text
+    if s["section"].lower() == sec.lower():
+       ~^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+2025-10-30 00:12:45,290 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-30 00:12:45,292 - main - INFO - 📄 Input file: data/samples/tronarp22a_ICML.pdf
+2025-10-30 00:12:45,295 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-30 00:13:25,941 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-10-30 00:13:25,992 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: data/samples/tronarp22a_ICML.pdf
+2025-10-30 00:13:25,995 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections...
+2025-10-30 00:14:05,496 - main - ERROR - ❌ Pipeline execution failed: 'list' object has no attribute 'keys'
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 56, in main
+    final_output = pipeline.run_pipeline(args.pdf)  # <-- fixed method name
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 51, in run_pipeline
+    self.logger.info(f"✅ Extracted sections: {list(sections.keys())}")
+                                                    ^^^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'keys'
+2025-10-30 00:30:36,215 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-30 00:30:36,216 - main - INFO - 📄 Input file: data/samples/tronarp22a_ICML.pdf
+2025-10-30 00:30:36,219 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-30 00:31:14,941 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-10-30 00:31:14,967 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: data/samples/tronarp22a_ICML.pdf
+2025-10-30 00:31:14,969 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections...
+2025-10-30 00:31:48,562 - pipeline.pipeline_manager - INFO - ✅ Extracted sections: ['<best_matching_section_name>', 'Unknown', 'Unknown', '<best_matching_section_name>', '<best_matching_section_name>', '<best_matching_section_name>']
+2025-10-30 00:31:48,576 - pipeline.pipeline_manager - INFO - 🔹 Step 2: Summarizing sections...
+2025-10-30 00:31:48,576 - pipeline.pipeline_manager - INFO -    → Summarizing section: <best_matching_section_name>
+2025-10-30 00:31:54,426 - main - ERROR - ❌ Pipeline execution failed: 'NoneType' object has no attribute 'strip'
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 56, in main
+    final_output = pipeline.run_pipeline(args.pdf)  # <-- fixed method name
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 76, in run_pipeline
+    summary_data = self.summarizer.summarize_section(section_name, section_text)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\summarizer_agent.py", line 46, in summarize_section
+    "summary": summary.strip(),
+               ^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'strip'
+2025-10-30 00:35:36,507 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-30 00:35:36,510 - main - INFO - 📄 Input file: data/samples/tronarp22a_ICML.pdf
+2025-10-30 00:35:36,514 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-30 00:36:17,263 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-10-30 00:36:17,298 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: data/samples/tronarp22a_ICML.pdf
+2025-10-30 00:36:17,300 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections...
+2025-10-30 00:36:53,722 - pipeline.pipeline_manager - INFO - ✅ Extracted sections: ['<best_matching_section_name>', 'Unknown', 'Unknown', '<best_matching_section_name>', '<best_matching_section_name>', '<best_matching_section_name>']
+2025-10-30 00:36:53,749 - pipeline.pipeline_manager - INFO - 🔹 Step 2: Summarizing sections...
+2025-10-30 00:36:53,751 - pipeline.pipeline_manager - INFO -    → Summarizing section: <best_matching_section_name>
+2025-10-30 00:37:02,775 - pipeline.pipeline_manager - INFO -    → Summarizing section: Unknown
+2025-10-30 00:37:04,209 - pipeline.pipeline_manager - INFO -    → Summarizing section: Unknown
+2025-10-30 00:37:05,685 - pipeline.pipeline_manager - INFO -    → Summarizing section: <best_matching_section_name>
+2025-10-30 00:37:07,184 - pipeline.pipeline_manager - INFO -    → Summarizing section: <best_matching_section_name>
+2025-10-30 00:37:08,712 - pipeline.pipeline_manager - INFO -    → Summarizing section: <best_matching_section_name>
+2025-10-30 00:37:10,097 - pipeline.pipeline_manager - INFO - ✅ All sections summarized successfully.
+2025-10-30 00:37:10,103 - pipeline.pipeline_manager - INFO - 🔹 Step 3: Formatting final poster output...
+2025-10-30 00:37:23,805 - pipeline.pipeline_manager - INFO - 🎉 Pipeline completed successfully.
+2025-10-30 00:37:23,823 - pipeline.pipeline_manager - INFO - 📝 Output saved at: data/outputs/poster_output.json
+2025-10-30 00:37:23,853 - main - INFO - ✅ Pipeline completed successfully!
+2025-10-30 00:37:23,859 - main - INFO - 📝 Output saved at: data/outputs\poster_output_2025-10-30_00-37-23.json
+2025-10-30 01:14:42,118 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-30 01:14:42,121 - main - INFO - 📄 Input file: data/samples/1.json
+2025-10-30 01:14:42,132 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-30 01:15:33,517 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-10-30 01:15:33,661 - main - INFO - 🧠 Detected JSON input file.
+2025-10-30 01:15:33,692 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: data/samples/1.json
+2025-10-30 01:15:33,705 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections...
+2025-10-30 01:15:33,719 - pipeline.pipeline_manager - INFO - 📘 Reading sections directly from JSON input...
+2025-10-30 01:15:33,882 - main - ERROR - ❌ Pipeline execution failed: ❌ JSON input must contain a 'sections' list or be a list of sections.
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 79, in main
+    final_output = pipeline.run_pipeline(args.input, input_type="json")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 67, in run_pipeline
+    raise ValueError("❌ JSON input must contain a 'sections' list or be a list of sections.")
+ValueError: ❌ JSON input must contain a 'sections' list or be a list of sections.
+2025-10-30 01:20:10,250 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-30 01:20:10,252 - main - INFO - 📄 Input file: data/samples/1.json
+2025-10-30 01:20:10,265 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-30 01:20:52,452 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-10-30 01:20:52,525 - main - INFO - 🧠 Detected JSON input file.
+2025-10-30 01:20:52,531 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: data/samples/1.json
+2025-10-30 01:20:52,532 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections...
+2025-10-30 01:20:52,535 - pipeline.pipeline_manager - INFO - 📘 Reading sections directly from JSON input...
+2025-10-30 01:20:52,595 - pipeline.pipeline_manager - INFO - ✅ Extracted 63 sections: ['Abstract', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Related Works', 'Related Works', 'Related Works', 'Quantifying Image Anonymization', 'Current Anonymization Landscape', 'Problem Statement', 'Problem Statement', 'Pitfalls of Existing Metrics', 'Evaluating Entire Images', 'Human Perception for Anonymization', 'Human Perception for Anonymization', 'PerceptAnon: A Human-Centric Metric', 'Curating a Dataset for Anonymization', 'Curating a Dataset for Anonymization', 'Curating a Dataset for Anonymization', 'Curating a Dataset for Anonymization', 'Curating a Dataset for Anonymization', 'Human Annotations', 'Human Annotations', 'Human Annotations', 'Computing PerceptAnon Metric', 'Computing PerceptAnon Metric', 'Computing PerceptAnon Metric', 'Computing PerceptAnon Metric', 'Computing PerceptAnon Metric', 'Experiments', 'Experiment Setup', 'Experiment Setup', 'Experiment Setup', 'Experiment Setup', 'Experiment Setup', 'Experiment Setup', 'Implementation Details', 'Evaluating Alignment with Human Scores', 'Evaluating Alignment with Human Scores', 'Evaluating Alignment with Human Scores', 'Evaluating Alignment with Human Scores', 'Evaluating Alignment with Human Scores', 'Discussions', 'Discussions', 'Discussions', 'Model', 'Model', 'Model', 'Conclusion', 'Conclusion', 'C. Additional Results', '']
+2025-10-30 01:20:52,604 - pipeline.pipeline_manager - INFO - 🔹 Step 2: Summarizing sections...
+2025-10-30 01:20:52,606 - pipeline.pipeline_manager - INFO -    → Summarizing section: Abstract
+2025-10-30 01:21:05,629 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:08,268 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:09,718 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:10,885 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:12,112 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:13,294 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:14,491 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:15,701 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:17,368 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:18,976 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:21,144 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:23,239 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:24,814 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:26,302 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-30 01:21:27,792 - pipeline.pipeline_manager - INFO -    → Summarizing section: Related Works
+2025-10-30 01:21:31,080 - pipeline.pipeline_manager - INFO -    → Summarizing section: Related Works
+2025-10-30 01:21:32,988 - pipeline.pipeline_manager - INFO -    → Summarizing section: Related Works
+2025-10-30 01:21:34,774 - pipeline.pipeline_manager - INFO -    → Summarizing section: Quantifying Image Anonymization
+2025-10-30 01:21:36,334 - pipeline.pipeline_manager - INFO -    → Summarizing section: Current Anonymization Landscape
+2025-10-30 01:21:38,135 - pipeline.pipeline_manager - INFO -    → Summarizing section: Problem Statement
+2025-10-30 01:21:39,513 - pipeline.pipeline_manager - INFO -    → Summarizing section: Problem Statement
+2025-10-30 01:21:41,018 - pipeline.pipeline_manager - INFO -    → Summarizing section: Pitfalls of Existing Metrics
+2025-10-30 01:21:43,299 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Entire Images
+2025-10-30 01:21:46,398 - pipeline.pipeline_manager - INFO -    → Summarizing section: Human Perception for Anonymization
+2025-10-30 01:21:48,292 - pipeline.pipeline_manager - INFO -    → Summarizing section: Human Perception for Anonymization
+2025-10-30 01:21:50,007 - pipeline.pipeline_manager - INFO -    → Summarizing section: PerceptAnon: A Human-Centric Metric
+2025-10-30 01:21:51,435 - pipeline.pipeline_manager - INFO -    → Summarizing section: Curating a Dataset for Anonymization
+2025-10-30 01:21:53,542 - pipeline.pipeline_manager - INFO -    → Summarizing section: Curating a Dataset for Anonymization
+2025-10-30 01:21:56,341 - pipeline.pipeline_manager - INFO -    → Summarizing section: Curating a Dataset for Anonymization
+2025-10-30 01:21:58,545 - pipeline.pipeline_manager - INFO -    → Summarizing section: Curating a Dataset for Anonymization
+2025-10-30 01:21:59,958 - pipeline.pipeline_manager - INFO -    → Summarizing section: Curating a Dataset for Anonymization
+2025-10-30 01:22:02,125 - pipeline.pipeline_manager - INFO -    → Summarizing section: Human Annotations
+2025-10-30 01:22:04,153 - pipeline.pipeline_manager - INFO -    → Summarizing section: Human Annotations
+2025-10-30 01:22:06,733 - pipeline.pipeline_manager - INFO -    → Summarizing section: Human Annotations
+2025-10-30 01:22:09,227 - pipeline.pipeline_manager - INFO -    → Summarizing section: Computing PerceptAnon Metric
+2025-10-30 01:22:11,233 - pipeline.pipeline_manager - INFO -    → Summarizing section: Computing PerceptAnon Metric
+2025-10-30 01:22:12,713 - pipeline.pipeline_manager - INFO -    → Summarizing section: Computing PerceptAnon Metric
+2025-10-30 01:22:14,600 - pipeline.pipeline_manager - INFO -    → Summarizing section: Computing PerceptAnon Metric
+2025-10-30 01:22:16,230 - pipeline.pipeline_manager - INFO -    → Summarizing section: Computing PerceptAnon Metric
+2025-10-30 01:22:17,871 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiments
+2025-10-30 01:22:19,341 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-30 01:22:21,008 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-30 01:22:22,920 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-30 01:22:24,888 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-30 01:22:26,785 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-30 01:22:28,983 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-30 01:22:30,880 - pipeline.pipeline_manager - INFO -    → Summarizing section: Implementation Details
+2025-10-30 01:22:32,520 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Alignment with Human Scores
+2025-10-30 01:22:34,553 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Alignment with Human Scores
+2025-10-30 01:22:36,213 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Alignment with Human Scores
+2025-10-30 01:22:37,998 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Alignment with Human Scores
+2025-10-30 01:22:39,738 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Alignment with Human Scores
+2025-10-30 01:22:41,180 - pipeline.pipeline_manager - INFO -    → Summarizing section: Discussions
+2025-10-30 01:22:42,768 - pipeline.pipeline_manager - INFO -    → Summarizing section: Discussions
+2025-10-30 01:22:44,398 - pipeline.pipeline_manager - INFO -    → Summarizing section: Discussions
+2025-10-30 01:22:46,758 - pipeline.pipeline_manager - INFO -    → Summarizing section: Model
+2025-10-30 01:22:48,823 - pipeline.pipeline_manager - INFO -    → Summarizing section: Model
+2025-10-30 01:22:51,403 - pipeline.pipeline_manager - INFO -    → Summarizing section: Model
+2025-10-30 01:22:53,478 - pipeline.pipeline_manager - INFO -    → Summarizing section: Conclusion
+2025-10-30 01:22:56,705 - pipeline.pipeline_manager - INFO -    → Summarizing section: Conclusion
+2025-10-30 01:22:58,526 - pipeline.pipeline_manager - INFO -    → Summarizing section: C. Additional Results
+2025-10-30 01:23:03,582 - pipeline.pipeline_manager - INFO -    → Summarizing section: 
+2025-10-30 01:23:06,276 - pipeline.pipeline_manager - INFO - ✅ All sections summarized successfully.
+2025-10-30 01:23:06,278 - pipeline.pipeline_manager - INFO - 🔹 Step 3: Formatting final poster output...
+2025-10-30 01:23:18,329 - pipeline.pipeline_manager - INFO - 🎉 Pipeline completed successfully.
+2025-10-30 01:23:18,341 - pipeline.pipeline_manager - INFO - 📝 Output saved at: data/outputs/poster_output.json
+2025-10-30 01:23:18,376 - main - INFO - ✅ Pipeline completed successfully!
+2025-10-30 01:23:18,377 - main - INFO - 📝 Output saved at: data/outputs\poster_output_2025-10-30_01-23-18.json

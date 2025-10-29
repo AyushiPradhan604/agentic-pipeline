@@ -1,0 +1,3701 @@
+{
+    "paper_id": "15dd0439d1024e0e44eb6d50737e789cdce4edfc",
+    "header": {
+        "generated_with": "S2ORC 1.0.0",
+        "date_generated": "2025-09-05T06:36:36.669697Z"
+    },
+    "title": "PerceptAnon: Exploring the Human Perception of Image Anonymization Beyond Pseudonymization for GDPR",
+    "authors": [
+        {
+            "first": "Kartik",
+            "middle": [],
+            "last": "Patwari",
+            "suffix": "",
+            "affiliation": {
+                "laboratory": "",
+                "institution": "University of California Davis",
+                "location": {
+                    "region": "CA",
+                    "country": "USA"
+                }
+            },
+            "email": ""
+        },
+        {
+            "first": "Chen-Nee",
+            "middle": [],
+            "last": "Chuah",
+            "suffix": "",
+            "affiliation": {
+                "laboratory": "",
+                "institution": "University of California Davis",
+                "location": {
+                    "region": "CA",
+                    "country": "USA"
+                }
+            },
+            "email": ""
+        },
+        {
+            "first": "Lingjuan",
+            "middle": [],
+            "last": "Lyu",
+            "suffix": "",
+            "affiliation": {
+                "laboratory": "",
+                "institution": "Sony AI",
+                "location": {}
+            },
+            "email": ""
+        },
+        {
+            "first": "Vivek",
+            "middle": [],
+            "last": "Sharma",
+            "suffix": "",
+            "affiliation": {
+                "laboratory": "",
+                "institution": "Sony AI",
+                "location": {}
+            },
+            "email": "<viveksharma@sony.com>."
+        }
+    ],
+    "year": "",
+    "venue": null,
+    "identifiers": {},
+    "abstract": "Current image anonymization techniques, largely focus on localized pseudonymization, typically modify identifiable features like faces or full bodies and evaluate anonymity through metrics such as detection and re-identification rates. However, this approach often overlooks information present in the entire image post-anonymization that can compromise privacy, such as specific locations, objects/items, or unique attributes. Acknowledging the pivotal role of human judgment in anonymity, our study conducts a thorough analysis of perceptual anonymization, exploring its spectral nature and its critical implications for image privacy assessment, particularly in light of regulations such as the General Data Protection Regulation (GDPR). To facilitate this, we curated a dataset specifically tailored for assessing anonymized images. We introduce a learning-based metric, PerceptAnon, which is tuned to align with the human Perception of Anonymity. PerceptAnon evaluates both original-anonymized image pairs and solely anonymized images. Trained using human annotations, our metric encompasses both anonymized subjects and their contextual backgrounds, thus providing a comprehensive evaluation of privacy vulnerabilities. We envision this work as a milestone for understanding and assessing image anonymization, and establishing a foundation for future research. The codes and dataset are available in https://github.com/ SonyResearch/gdpr_perceptanon.",
+    "pdf_parse": {
+        "paper_id": "15dd0439d1024e0e44eb6d50737e789cdce4edfc",
+        "_pdf_hash": "",
+        "abstract": [
+            {
+                "text": "Current image anonymization techniques, largely focus on localized pseudonymization, typically modify identifiable features like faces or full bodies and evaluate anonymity through metrics such as detection and re-identification rates. However, this approach often overlooks information present in the entire image post-anonymization that can compromise privacy, such as specific locations, objects/items, or unique attributes. Acknowledging the pivotal role of human judgment in anonymity, our study conducts a thorough analysis of perceptual anonymization, exploring its spectral nature and its critical implications for image privacy assessment, particularly in light of regulations such as the General Data Protection Regulation (GDPR). To facilitate this, we curated a dataset specifically tailored for assessing anonymized images. We introduce a learning-based metric, PerceptAnon, which is tuned to align with the human Perception of Anonymity. PerceptAnon evaluates both original-anonymized image pairs and solely anonymized images. Trained using human annotations, our metric encompasses both anonymized subjects and their contextual backgrounds, thus providing a comprehensive evaluation of privacy vulnerabilities. We envision this work as a milestone for understanding and assessing image anonymization, and establishing a foundation for future research. The codes and dataset are available in https://github.com/ SonyResearch/gdpr_perceptanon.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Abstract",
+                "sec_num": null
+            }
+        ],
+        "body_text": [
+            {
+                "text": "The vast proliferation of data and digital platforms has heightened data privacy concerns, necessitating effective anonymization strategies to protect Personally Identifiable Information (PII) in images. The General Data Protection Regulation (GDPR) distinguishes 'pseudonymisation'modifying personal data to prevent direct attribution to individuals without additional information-with 'anonymization', where personal identification becomes unfeasible (EDPS, 2021) . Under GDPR, anonymity is achieved when data is processed such that the subject becomes unidentifiable, with masking cited as the most feasible option for images (Weitzenboeck et al., 2022; Barta, 2018) . Current image anonymization techniques, such as masking, blurring, pixelation (Du et al., 2019; Yang et al., 2022) , and generation (Li et al., 2021) , largely align with pseudonymization, focusing on modifying identifiable attributes like faces or full bodies.",
+                "cite_spans": [
+                    {
+                        "start": 453,
+                        "end": 465,
+                        "text": "(EDPS, 2021)",
+                        "ref_id": "BIBREF5"
+                    },
+                    {
+                        "start": 629,
+                        "end": 656,
+                        "text": "(Weitzenboeck et al., 2022;",
+                        "ref_id": "BIBREF42"
+                    },
+                    {
+                        "start": 657,
+                        "end": 669,
+                        "text": "Barta, 2018)",
+                        "ref_id": "BIBREF1"
+                    },
+                    {
+                        "start": 750,
+                        "end": 767,
+                        "text": "(Du et al., 2019;",
+                        "ref_id": "BIBREF4"
+                    },
+                    {
+                        "start": 768,
+                        "end": 786,
+                        "text": "Yang et al., 2022)",
+                        "ref_id": "BIBREF44"
+                    },
+                    {
+                        "start": 804,
+                        "end": 821,
+                        "text": "(Li et al., 2021)",
+                        "ref_id": "BIBREF24"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "Traditional research in this domain has mostly concentrated on localized areas within images, using detection and reidentification rates for anonymity assessment. GDPR guidelines mention that \"the use of additional information can lead to the identification of individuals\" (EDPS, 2021) like recognizable items or locations. As shown in Figure 1 , addi-Orig.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 344,
+                        "end": 345,
+                        "text": "1",
+                        "ref_id": null
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "Anon.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "Lowest to Highest Anonymity Score",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "Orig.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "Anon.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "Lowest to Highest Anonymity Score",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "Figure 2 . Comparison of traditional metrics and PerceptAnon against human anonymity assessments in image-anonymized pairs. The graph ranks anonymity scores from lowest to highest. PerceptAnon shows the closest alignment with human judgments. All scores were normalized between 0 and 1 for visual comparison, with PSNR, SSIM, and FID inverted for consistency with anonymity criteria.2 Notably, human and PerceptAnon scores are based off only the anonymized image (without original reference). Best viewed in color.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 7,
+                        "end": 8,
+                        "text": "2",
+                        "ref_id": null
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "tional recognizable and privacy-compromising cues exist in pseudonimized image, as local detectability tends to overlook the full image content. We advocate that considering potential privacy-leaking cues throughout the entire image is crucial for holistic assessment, crucial in real-world contexts where privacy concerns can extend beyond the direct detectability. Moreover, detectability evaluations are often binary-either re-identified or not-ignoring the spectrum of effectiveness that characterizes perceptual anonymization.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "In response, our study focuses on the post-detection phase of anonymization techniques, acknowledging that the entire image, including the background and ancillary details, can compromise privacy. Our research is inspired by recent work in adopting a human-centric metric for privacy evaluation of reconstructed images (Sun et al., 2023) . We utilize standard image assessment metrics like Structural Similarity Index Measure (SSIM) or Learned Perceptual Image Patch Similarity (LPIPS), which have been recently evaluated in human perception-based image comparison and privacy assessment contexts (Fu et al., 2023; Sun et al., 2023) and evaluate their alignment with human perception of anonymity. In Figure 2 , we compare various originalanonymized image pairs, analyzing how well traditional image assessment metrics align with human assessments of anonymity. We find a lack of strong alignment between traditional metrics and human perception, primarily due to their deficiency in capturing semantic aspects of anonymity. This observation highlights the need for a new metric that more closely reflects human judgment.",
+                "cite_spans": [
+                    {
+                        "start": 319,
+                        "end": 337,
+                        "text": "(Sun et al., 2023)",
+                        "ref_id": "BIBREF38"
+                    },
+                    {
+                        "start": 597,
+                        "end": 614,
+                        "text": "(Fu et al., 2023;",
+                        "ref_id": "BIBREF8"
+                    },
+                    {
+                        "start": 615,
+                        "end": 632,
+                        "text": "Sun et al., 2023)",
+                        "ref_id": "BIBREF38"
+                    }
+                ],
+                "ref_spans": [
+                    {
+                        "start": 708,
+                        "end": 709,
+                        "text": "2",
+                        "ref_id": null
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "To achieve this, we curate a new dataset which consists of images from widely-used vision datasets in the detection and anonymization domain, specifically for persons (MS-COCO (Lin et al., 2014) , PASCAL VOC (Everingham et al., 2010) ) and faces (LFW (Huang et al., 2008) , CelebA-HQ (Liu et al., 2015) ). We then anonymize selected images using various existing methods. We propose two annotation approaches: one where evaluators assess only the anonymized images, and another where they compare the anonymized images with their originals. This allows us to explore the ability of humans to gauge anonymity from a standalone anonymized image, how the presence of the original image influences this perception, and a comprehensive understanding of privacy vulnerabilities. Using mean human annotations we compare the effectiveness of existing image comparison metrics against human judgments, highlighting their degree of alignment or disparity.",
+                "cite_spans": [
+                    {
+                        "start": 176,
+                        "end": 194,
+                        "text": "(Lin et al., 2014)",
+                        "ref_id": "BIBREF25"
+                    },
+                    {
+                        "start": 208,
+                        "end": 233,
+                        "text": "(Everingham et al., 2010)",
+                        "ref_id": "BIBREF6"
+                    },
+                    {
+                        "start": 251,
+                        "end": 271,
+                        "text": "(Huang et al., 2008)",
+                        "ref_id": "BIBREF16"
+                    },
+                    {
+                        "start": 284,
+                        "end": 302,
+                        "text": "(Liu et al., 2015)",
+                        "ref_id": "BIBREF26"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "Our work introduces PerceptAnon, a novel metric that aligns better with human perceptions. Our metric is not only trained to evaluate original-anonymized image pairs but also focuses on solely anonymized images. PerceptAnon represents a shift towards a holistic evaluation of anonymization, assessing the cumulative image rather than just the anonymized subjects. We conduct experiments to quantify whether learning anonymity from our annotations is more effective as a classification or regression task, and explore the optimal granularity for aligning with human perception.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "The key contributions of this paper are as follows:",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "\u2022 To the best of our knowledge, this is the first work that attempts to quantify image anonymization specifically from a human-centric perspective. ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1."
+            },
+            {
+                "text": "Anonymization Techniques. Early image anonymization relied on traditional obfuscation methods like masking, blurring, and pixelation (Du et al., 2019; Yang et al., 2022) , which are prevalent in real-world applications (Pachni A., 2022; Jaichuen et al., 2023) . Despite their widespread use, these techniques have notable limitations, especially in the context of advanced de-obfuscation methods (Zhang et al., 2020; Vishwamitra et al., 2017; Oh et al., 2016; McPherson et al., 2016) . The rise of deep learning introduced generative models, for targeted face and full-body anonymization (He et al., 2023; Rosenberg et al., 2023; Hukkel\u00e5s et al., 2019) . This includes attribute-preserving approaches (Li et al., 2021; Barattin et al., 2023; Hellmann et al., 2023) and recent advancements in photo-realistic full-body anonymization (Maximov et al., 2020; Hukkel\u00e5s et al., 2023) . Inpainting techniques have also can also be used to \"erase\" sensitive areas effectively (Upenik et al., 2019; Cao et al., 2021) . However, the efficacy of all these methods is predominantly assessed on anonymized subjects, often overlooking the comprehensive visual context within images which is critical for privacy. Our work addresses this gap by introducing a metric to evaluate anonymity leakage in a holistic manner, factoring in the entire image rather than focusing solely on the anonymized subjects.",
+                "cite_spans": [
+                    {
+                        "start": 133,
+                        "end": 150,
+                        "text": "(Du et al., 2019;",
+                        "ref_id": "BIBREF4"
+                    },
+                    {
+                        "start": 151,
+                        "end": 169,
+                        "text": "Yang et al., 2022)",
+                        "ref_id": "BIBREF44"
+                    },
+                    {
+                        "start": 219,
+                        "end": 236,
+                        "text": "(Pachni A., 2022;",
+                        "ref_id": null
+                    },
+                    {
+                        "start": 237,
+                        "end": 259,
+                        "text": "Jaichuen et al., 2023)",
+                        "ref_id": "BIBREF21"
+                    },
+                    {
+                        "start": 396,
+                        "end": 416,
+                        "text": "(Zhang et al., 2020;",
+                        "ref_id": "BIBREF48"
+                    },
+                    {
+                        "start": 417,
+                        "end": 442,
+                        "text": "Vishwamitra et al., 2017;",
+                        "ref_id": "BIBREF41"
+                    },
+                    {
+                        "start": 443,
+                        "end": 459,
+                        "text": "Oh et al., 2016;",
+                        "ref_id": "BIBREF30"
+                    },
+                    {
+                        "start": 460,
+                        "end": 483,
+                        "text": "McPherson et al., 2016)",
+                        "ref_id": "BIBREF28"
+                    },
+                    {
+                        "start": 588,
+                        "end": 605,
+                        "text": "(He et al., 2023;",
+                        "ref_id": "BIBREF13"
+                    },
+                    {
+                        "start": 606,
+                        "end": 629,
+                        "text": "Rosenberg et al., 2023;",
+                        "ref_id": "BIBREF34"
+                    },
+                    {
+                        "start": 630,
+                        "end": 652,
+                        "text": "Hukkel\u00e5s et al., 2019)",
+                        "ref_id": "BIBREF19"
+                    },
+                    {
+                        "start": 701,
+                        "end": 718,
+                        "text": "(Li et al., 2021;",
+                        "ref_id": "BIBREF24"
+                    },
+                    {
+                        "start": 719,
+                        "end": 741,
+                        "text": "Barattin et al., 2023;",
+                        "ref_id": "BIBREF0"
+                    },
+                    {
+                        "start": 742,
+                        "end": 764,
+                        "text": "Hellmann et al., 2023)",
+                        "ref_id": "BIBREF14"
+                    },
+                    {
+                        "start": 832,
+                        "end": 854,
+                        "text": "(Maximov et al., 2020;",
+                        "ref_id": "BIBREF27"
+                    },
+                    {
+                        "start": 855,
+                        "end": 877,
+                        "text": "Hukkel\u00e5s et al., 2023)",
+                        "ref_id": null
+                    },
+                    {
+                        "start": 968,
+                        "end": 989,
+                        "text": "(Upenik et al., 2019;",
+                        "ref_id": "BIBREF40"
+                    },
+                    {
+                        "start": 990,
+                        "end": 1007,
+                        "text": "Cao et al., 2021)",
+                        "ref_id": "BIBREF2"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Related Works",
+                "sec_num": "2."
+            },
+            {
+                "text": "Contextual Cues in Anonymity Assessment. Recent works (Nagrani et al., 2018; Qian et al., 2017; Shao et al., 2019) indicate the potential of auxiliary information, like voice or social network data, in compromising anonymity. However, the specific role of visual elements within images remains less explored. The work by (Hukkel\u00e5s & Lindseth, 2023b) focuses on how anonymization affects the recognition of other objects in images during training and testing, but does not consider the role of surrounding information in quantifying the effectiveness of anonymization. In contrast, our work investigates this aspect.",
+                "cite_spans": [
+                    {
+                        "start": 54,
+                        "end": 76,
+                        "text": "(Nagrani et al., 2018;",
+                        "ref_id": "BIBREF29"
+                    },
+                    {
+                        "start": 77,
+                        "end": 95,
+                        "text": "Qian et al., 2017;",
+                        "ref_id": "BIBREF33"
+                    },
+                    {
+                        "start": 96,
+                        "end": 114,
+                        "text": "Shao et al., 2019)",
+                        "ref_id": "BIBREF36"
+                    },
+                    {
+                        "start": 321,
+                        "end": 349,
+                        "text": "(Hukkel\u00e5s & Lindseth, 2023b)",
+                        "ref_id": null
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Related Works",
+                "sec_num": "2."
+            },
+            {
+                "text": "Perceptual Metrics. DreamSim (Fu et al., 2023) is a metric designed to assess image similarity. Given a set of three images, it determines which one, out of two options, is more similar to the third reference image. SemSim (Sun et al., 2023) proposes a learned metric that integrates human judgment for evaluating privacy in the context of image reconstruction attacks. Our research, inspired by these works, shifts focus to a different aspect of privacy: the quantification of anonymization.",
+                "cite_spans": [
+                    {
+                        "start": 29,
+                        "end": 46,
+                        "text": "(Fu et al., 2023)",
+                        "ref_id": "BIBREF8"
+                    },
+                    {
+                        "start": 223,
+                        "end": 241,
+                        "text": "(Sun et al., 2023)",
+                        "ref_id": "BIBREF38"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Related Works",
+                "sec_num": "2."
+            },
+            {
+                "text": "In this section, we explore current image anonymization approaches, discuss the limitations of pseudonymization techniques and evaluation metrics. Then, we investigate how to capture anonymity throughout entire images. Finally, we discuss the potential of human perception in aiding the evaluation of image anonymization.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Quantifying Image Anonymization",
+                "sec_num": "3."
+            },
+            {
+                "text": "Current image anonymization techniques (Barattin et al., 2023; Hukkel\u00e5s & Lindseth, 2023a) , primarily employ pseudonymization methods like blurring or generating regions to obscure individual PII. While effective in localized contexts, traditional metrics such as re-identification (re-ID) or detection rates do not fully capture privacy implications in the broader image context, including background details and interactions. This highlights the need for a more holistic metric that encompasses the entire image content.",
+                "cite_spans": [
+                    {
+                        "start": 39,
+                        "end": 62,
+                        "text": "(Barattin et al., 2023;",
+                        "ref_id": "BIBREF0"
+                    },
+                    {
+                        "start": 63,
+                        "end": 90,
+                        "text": "Hukkel\u00e5s & Lindseth, 2023a)",
+                        "ref_id": null
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Current Anonymization Landscape",
+                "sec_num": "3.1."
+            },
+            {
+                "text": "The inherent challenge in image anonymization is not just preserving privacy by obscuring individual PII but ensuring no observable privacy leaks are present across the entire image. Our research aims to address these questions:",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Problem Statement",
+                "sec_num": "3.2."
+            },
+            {
+                "text": "1. How can we assess total anonymity of an image holistically -beyond just pseudonymization? 2. How to learn human perception of anonymity, viewing it as regression or (ordinal) classification? 3. What is an appropriate scale for measuring anonymity: binary, or continuous and at what granularity? 4. Should anonymized images be assessed independently or in comparison with their original counterparts?",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Problem Statement",
+                "sec_num": "3.2."
+            },
+            {
+                "text": "The metrics used in current anonymization techniques (Barattin et al., 2023; Hukkel\u00e5s & Lindseth, 2023a; Maximov et al., 2020) , such as Re-ID or detection rates, primarily assess the effectiveness of pseudonymization in erasing specific PII like faces or bodies. While effective for these specific tasks, these metrics fall short in broader contexts. Firstly, they are binary (detected/not detected, re-identified/not re-identified), oversimplifying the complexity of anonymity. Secondly, these metrics are designed for localized feature assessment and overlook the wider image context rich in de-anonymizing cues. Crucial elements like location-specific backgrounds, unique scene objects, or subject interactions within the image are often neglected. Therefore, while Re-ID and detection rates serve well for pseudonymization assessment of specific PII, they are not suitable for holistic evaluation of image anonymity, emphasizing the need for more comprehensive metrics.",
+                "cite_spans": [
+                    {
+                        "start": 53,
+                        "end": 76,
+                        "text": "(Barattin et al., 2023;",
+                        "ref_id": "BIBREF0"
+                    },
+                    {
+                        "start": 77,
+                        "end": 104,
+                        "text": "Hukkel\u00e5s & Lindseth, 2023a;",
+                        "ref_id": null
+                    },
+                    {
+                        "start": 105,
+                        "end": 126,
+                        "text": "Maximov et al., 2020)",
+                        "ref_id": "BIBREF27"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Pitfalls of Existing Metrics",
+                "sec_num": "3.3."
+            },
+            {
+                "text": "To the best of our knowledge, this is the first work focusing on the anonymity evaluation of the entire image beyond pseudonymization, and currently, there exist no metrics specifically designed for this task. To form a baseline, we draw from adjacent realms such as the privacy assessment of reconstructed images (Sun et al., 2023) which commonly utilize traditional image quality and similarity metrics. Metrics like Mean Squared Error (MSE), Peak Signal-to-Noise Ratio (PSNR), Structural Similarity Index (SSIM), Learned Perceptual Image Patch Similarity (LPIPS), and Fr\u00e9chet Inception Distance (FID), while not initially developed for assessing anonymity, offer an objective measure of visual changes between original and anonymized image pairs. However, their limitation is apparent in their inability to identify which changes are critical for preserving anonymity. Our proposed metric, PerceptAnon, is designed to overcome this limitation by providing a holistic, perception-based assessment.",
+                "cite_spans": [
+                    {
+                        "start": 314,
+                        "end": 332,
+                        "text": "(Sun et al., 2023)",
+                        "ref_id": "BIBREF38"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Evaluating Entire Images",
+                "sec_num": "3.4."
+            },
+            {
+                "text": "Recognizing the complexity of total image anonymity, we rely on human perception as a core principle. Human observers, capable of assessing anonymity without a reference image, consider a combination of features and contexts. This holistic approach is crucial for scenarios where anonymity extends beyond obscuring PII to encompassing all identifiable traits. Our metric, designed to mirror this nuanced human perception, complements existing evaluations like Re-ID and detection rates, adding a layer that accounts for broader and more subjective aspects of visual privacy.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Human Perception for Anonymization",
+                "sec_num": "3.5."
+            },
+            {
+                "text": "We recognize the complexity and multifaceted nature of human perception in the context of anonymity, acknowledging that it is often difficult to quantify (Wiles et al., 2012; Saunders et al., 2015) . Our work presents an initial step towards addressing this challenge.",
+                "cite_spans": [
+                    {
+                        "start": 154,
+                        "end": 174,
+                        "text": "(Wiles et al., 2012;",
+                        "ref_id": "BIBREF43"
+                    },
+                    {
+                        "start": 175,
+                        "end": 197,
+                        "text": "Saunders et al., 2015)",
+                        "ref_id": "BIBREF35"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Human Perception for Anonymization",
+                "sec_num": "3.5."
+            },
+            {
+                "text": "Recognizing human perception's key role, this section details our methodology for quantifying image anonymization, starting with curating a dataset and annotations, focused on new scopes and setups. We then detail the training of PerceptAnon, a metric trained on these annotations.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "PerceptAnon: A Human-Centric Metric",
+                "sec_num": "4."
+            },
+            {
+                "text": "Typically anonymization consists of two stages. The first is the PII detection/segmentation and second is applying an anonymization technique; our work focuses on analyzing the post detection phase. Existing datasets lack humanlabeled data that focus on the holistic assessment of image anonymization. To address this, we introduce a unique dataset that encompasses a wide spectrum of anonymiza-tion, from pseudonymization (local) to full anonymization (global). This dataset aims to evaluate human perception of anonymization in various contexts, particularly focusing on faces and full bodies -areas primarily researched in previous studies (Barattin et al., 2023; Yuan et al., 2022; Yang et al., 2022; Hukkel\u00e5s & Lindseth, 2023a) .",
+                "cite_spans": [
+                    {
+                        "start": 643,
+                        "end": 666,
+                        "text": "(Barattin et al., 2023;",
+                        "ref_id": "BIBREF0"
+                    },
+                    {
+                        "start": 667,
+                        "end": 685,
+                        "text": "Yuan et al., 2022;",
+                        "ref_id": "BIBREF47"
+                    },
+                    {
+                        "start": 686,
+                        "end": 704,
+                        "text": "Yang et al., 2022;",
+                        "ref_id": "BIBREF44"
+                    },
+                    {
+                        "start": 705,
+                        "end": 732,
+                        "text": "Hukkel\u00e5s & Lindseth, 2023a)",
+                        "ref_id": null
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Curating a Dataset for Anonymization",
+                "sec_num": "4.1."
+            },
+            {
+                "text": "Our dataset includes 500 images each from COCO, VOC, LFW, and CelebA-HQ, chosen for their relevance in face and full-body anonymization. COCO and VOC provide people in a diverse range of backgrounds, crucial for evaluating (global) anonymization, while CelebA and LFW are pivotal in face anonymization research (Barattin et al., 2023; Peng et al., 2022; Yuan et al., 2022) . Anonymization technique details. DeepFillV2 (Yu et al., 2019) and DeepPrivacy2 (Hukkel\u00e5s & Lindseth, 2023a ) are used for inpainting and generating respectively. Blurring and pixelation, are treated as similar obfuscation effects; hence, we pool them and randomly blurred half of the original images and pixelated the remainder. Pixelation was executed with a block size of 16\u00d716, in line with (Hukkel\u00e5s et al., 2019) . For blurring, we applied a Gaussian blur filter with a radius equal to 1/8 of the width of the bounding box (Dietlmeier et al., 2021) . Thus, we generated four anonymized versions for each original image.",
+                "cite_spans": [
+                    {
+                        "start": 311,
+                        "end": 334,
+                        "text": "(Barattin et al., 2023;",
+                        "ref_id": "BIBREF0"
+                    },
+                    {
+                        "start": 335,
+                        "end": 353,
+                        "text": "Peng et al., 2022;",
+                        "ref_id": "BIBREF32"
+                    },
+                    {
+                        "start": 354,
+                        "end": 372,
+                        "text": "Yuan et al., 2022)",
+                        "ref_id": "BIBREF47"
+                    },
+                    {
+                        "start": 419,
+                        "end": 436,
+                        "text": "(Yu et al., 2019)",
+                        "ref_id": "BIBREF46"
+                    },
+                    {
+                        "start": 454,
+                        "end": 481,
+                        "text": "(Hukkel\u00e5s & Lindseth, 2023a",
+                        "ref_id": null
+                    },
+                    {
+                        "start": 769,
+                        "end": 792,
+                        "text": "(Hukkel\u00e5s et al., 2019)",
+                        "ref_id": "BIBREF19"
+                    },
+                    {
+                        "start": 903,
+                        "end": 928,
+                        "text": "(Dietlmeier et al., 2021)",
+                        "ref_id": "BIBREF3"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Curating a Dataset for Anonymization",
+                "sec_num": "4.1."
+            },
+            {
+                "text": "We utilized DSFD (Li et al., 2019) with ResNet-152 backbone for face detection, which achieved AP scores of 96.6, 95.7, and 90.4 on the WIDER Face (Yang et al., 2016) easy, medium, and hard sets, respectively. Full-body detection and segmentation were performed using Mask-RCNN (He et al., 2017) , which has a box mAP of 47.4 and mask mAP of 41.8 on the COCO 2017 validation set. Both detectors are popular choices in previous anonymization research (Hukkel\u00e5s et al., 2019; Hukkel\u00e5s & Lindseth, 2023a) .",
+                "cite_spans": [
+                    {
+                        "start": 17,
+                        "end": 34,
+                        "text": "(Li et al., 2019)",
+                        "ref_id": "BIBREF23"
+                    },
+                    {
+                        "start": 147,
+                        "end": 166,
+                        "text": "(Yang et al., 2016)",
+                        "ref_id": "BIBREF45"
+                    },
+                    {
+                        "start": 278,
+                        "end": 295,
+                        "text": "(He et al., 2017)",
+                        "ref_id": "BIBREF12"
+                    },
+                    {
+                        "start": 450,
+                        "end": 473,
+                        "text": "(Hukkel\u00e5s et al., 2019;",
+                        "ref_id": "BIBREF19"
+                    },
+                    {
+                        "start": 474,
+                        "end": 501,
+                        "text": "Hukkel\u00e5s & Lindseth, 2023a)",
+                        "ref_id": null
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Curating a Dataset for Anonymization",
+                "sec_num": "4.1."
+            },
+            {
+                "text": "Scope details.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Curating a Dataset for Anonymization",
+                "sec_num": "4.1."
+            },
+            {
+                "text": "To differentiate and analyze both pseudonymization and anonymization, we present two image variants for each anonymization technique: (1) Local, which concentrates solely on PII, aligning with pseudonymization, and (2) Global, which retains the original context but alters PII, embodying anonymization. Figure 3 illustrates both global and local image examples. Additionally, Figure 4 shows the distribution of human annotator scores for each method and scope. Notably, global images, which include background context, consistently receive lower anonymity scores than local images. This trend emphasizes the significance of context and background in the overall perception of anonymity.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 310,
+                        "end": 311,
+                        "text": "3",
+                        "ref_id": "FIGREF0"
+                    },
+                    {
+                        "start": 383,
+                        "end": 384,
+                        "text": "4",
+                        "ref_id": "FIGREF4"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Curating a Dataset for Anonymization",
+                "sec_num": "4.1."
+            },
+            {
+                "text": "Annotation setups. Our dataset introduces two annotation setups; Human Annotation 1 (HA1): Annotators view only the anonymized image, excluding generated images to prevent misjudgments without original image comparison. Human Annotation 2 (HA2): Annotators see the original and its anonymized counterpart, excluding global masked images to avoid obvious recognition. Local mask images are excluded in both setups due to complete image obscuration. Shared anonymized images between the two setups were those processed with blur/pixelate and inpaint techniques.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Human Annotations",
+                "sec_num": "4.2."
+            },
+            {
+                "text": "Our dataset 500 original images, each is anonymized using four different techniques and two scopes, resulting in eight variations per image and thus 4000 images total. For HA1 setup, we accumulated a total of 2500 annotations across five categories: Global-Mask, Local-Blur, Global-Blur, Local-Inpaint, and Global-Inpaint. In HA2 setup, we gathered 3000 annotations spanning six categories: Local- Blur, Global-Blur, Local-Inpaint, Global-Inpaint, Local-Generative, and Global-Generative. Our dataset scale is consistent with similar human perceptual metric studies (Sun et al., 2023) . Our dataset, uniquely the first for global image privacy assessment with human annotations, covers all four major anonymization methods for faces and bodies, providing a comprehensive scope. We utilize various train/test strategies (as descibed in Section 5.1), to further combat the dataset scale and study robustness and generalizability.",
+                "cite_spans": [
+                    {
+                        "start": 566,
+                        "end": 584,
+                        "text": "(Sun et al., 2023)",
+                        "ref_id": "BIBREF38"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Human Annotations",
+                "sec_num": "4.2."
+            },
+            {
+                "text": "Collecting human annotations. Following a similar setup of (Sun et al., 2023) , our images were annotated by 6 independent annotators. Each annotator was asked to score the anonymity achieved on a scale of 1-10, with 10 being the highest degree of anonymity. Final scores were averaged across all annotators for each image or image pair. This approach lends itself to regression analysis using mean human scores, with further details on thresholding and granularity testing described in Section 5.1. We measured annotator consistency using Cronbach's Alpha (CA), where a higher score denotes greater annotation reliability. Our annotations yielded a CA value of 0.87, which is comparable to vision datasets that involve subjective, score-based annotations (Song et al., 2015; Gygli et al., 2014) .",
+                "cite_spans": [
+                    {
+                        "start": 59,
+                        "end": 77,
+                        "text": "(Sun et al., 2023)",
+                        "ref_id": "BIBREF38"
+                    },
+                    {
+                        "start": 756,
+                        "end": 775,
+                        "text": "(Song et al., 2015;",
+                        "ref_id": "BIBREF37"
+                    },
+                    {
+                        "start": 776,
+                        "end": 795,
+                        "text": "Gygli et al., 2014)",
+                        "ref_id": "BIBREF10"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Human Annotations",
+                "sec_num": "4.2."
+            },
+            {
+                "text": "Inspired by recent learning-based perception metrics (Sun et al., 2023; Fu et al., 2023) , we introduce PerceptAnon, a novel metric designed to capture human perceptions of image anonymization. PerceptAnon leverages humanannotated data, aiming to reflect a more intuitive and humancentric understanding of anonymization. PerceptAnon utilizes Convolutional Neural Networks (CNNs) to learn from human annotations. CNNs not only provided a robust basis for our studies but also facilitate a straightforward and in-terpretable approach that aligns with our study exploration.",
+                "cite_spans": [
+                    {
+                        "start": 53,
+                        "end": 71,
+                        "text": "(Sun et al., 2023;",
+                        "ref_id": "BIBREF38"
+                    },
+                    {
+                        "start": 72,
+                        "end": 88,
+                        "text": "Fu et al., 2023)",
+                        "ref_id": "BIBREF8"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Computing PerceptAnon Metric",
+                "sec_num": "4.3."
+            },
+            {
+                "text": "We provide further discussion on our choice of using CNNs in Appendix B.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Computing PerceptAnon Metric",
+                "sec_num": "4.3."
+            },
+            {
+                "text": "Training. Figure 5 demonstrates our training pipelines. Given an original image x and its anonymized counterpart x \u2032 , the model is trained on annotation scores s, where s is between 0 and 1, derived by normalizing the raw human ratings on a scale of 1-10. The supervised regression model f (x \u2032 , s; \u03b8) predicts an anonymization score that aligns with human evaluations. To explore both regression and classification, we transform the continuous scores s into ordinal categories, using rounding or thresholding for discretization (details in Section 5.1).",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 17,
+                        "end": 18,
+                        "text": "5",
+                        "ref_id": null
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Computing PerceptAnon Metric",
+                "sec_num": "4.3."
+            },
+            {
+                "text": "For HA1, the model f A1 (x \u2032 , s A1 ; \u03b8) is trained using s A1 scores, replicating scenarios where only anonymized images are available, without reference originals. This setup provides insights into anonymization perception in isolation. For HA2, we use a Siamese network architecture, f A2 (x, x \u2032 , s A2 ; \u03b8), where we concatenate features of both the original and anonymized images, and train end-to-end on s A2 scores.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Computing PerceptAnon Metric",
+                "sec_num": "4.3."
+            },
+            {
+                "text": "Observations and limitations. PerceptAnon aims to encompass a broad spectrum of anonymization, from localized pseudonymization to comprehensive anonymization. Despite its simplicity, it is found to be effective under varying scenarios (see Section 5). Key to its effectiveness is its training on human annotations, enabling it to discern nuances in anonymization beyond what traditional pixel-level or patch-based metrics capture. However, a limitation lies in its reliance on annotated data quality and diversity.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Computing PerceptAnon Metric",
+                "sec_num": "4.3."
+            },
+            {
+                "text": "In this section, we first introduce the experiment setup and implementation details of our proposed approach. We then assess existing metrics alignment with human perception and demonstrate the effectiveness of PerceptAnon. Finally we perform additional ablation studies and discussions to evaluate image anonymity with PerceptAnon.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Experiments",
+                "sec_num": "5."
+            },
+            {
+                "text": "Training/Testing setups. We evaluate with three distinct training and testing strategies utilizing our proposed anonymization dataset: (1) Whole Dataset (All) -the full dataset, split 60:20:20 for training, validation, and testing;",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Experiment Setup",
+                "sec_num": "5.1."
+            },
+            {
+                "text": "(2) Leave-One-Out-Validation (LOOV) -each of the four source datasets (COCO, VOC, LFW, CelebA) is used in turn as a test set, with the others for training; and (3) Task-Specific -separate person (Task-Person) and face (Task-Face) focused evaluations, with respective images from COCO and VOC, and LFW and CelebA, split in a 60:20:20 ratio. This approach aims to assess the effectiveness of our methods in both face and full-body anonymization scenarios, and additionally, to test the model's ability to generalize to unseen datasets.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Experiment Setup",
+                "sec_num": "5.1."
+            },
+            {
+                "text": "Granularity of anonymity. Our annotation scores ranging from 1 to 10 (with 10 being the highest anonymity), were normalized between 0 and 1 for regression analysis, termed Regression (Mean). For classification, we employed various thresholding strategies: 10-class (rounding mean scores), 5class (binning every two scores), 3-class (grouping scores at equal intervals into low, medium, high), and binary (dividing into low and high anonymity levels). Each classification model's thresholded scores were also normalized, suitable for regression.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Experiment Setup",
+                "sec_num": "5.1."
+            },
+            {
+                "text": "Backbone architectures. We experiment with the following backbone architectures: ResNet18,50,152 (He et al., 2016) , DenseNet121 (Huang et al., 2017) , and AlexNet (Krizhevsky et al., 2012) . For all architectures, we initialize with ImageNet pretrained weights. We use ResNet50 for main evaluation (see Appendix B for results on other architectures).",
+                "cite_spans": [
+                    {
+                        "start": 97,
+                        "end": 114,
+                        "text": "(He et al., 2016)",
+                        "ref_id": "BIBREF11"
+                    },
+                    {
+                        "start": 129,
+                        "end": 149,
+                        "text": "(Huang et al., 2017)",
+                        "ref_id": "BIBREF15"
+                    },
+                    {
+                        "start": 164,
+                        "end": 189,
+                        "text": "(Krizhevsky et al., 2012)",
+                        "ref_id": "BIBREF22"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Experiment Setup",
+                "sec_num": "5.1."
+            },
+            {
+                "text": "Evaluating metrics. We use Spearman's (\u03c1) and Kendall's (\u03c4 ) rank correlations between predicted and ground truth test scores across various label types. These non-parametric rank correlations, suitable for our ordinal data, range from -1 to 1, with values near the extremes indicating strong model consistency with human annotations. For models trained on transformed labels (e.g., binary), evaluation is similarly conducted against correspondingly transformed test scores. Following SemSim (Sun et al., 2023) , we also evaluate the correlation of human scores with traditional image assessment metrics. Since we use rank-based correlations, the values do not need to be in the same distribution and range. We do not compare against SemSim in our evaluations, as our focus is on anonymization, whereas SemSim is designed for assessing in image reconstruction contexts.",
+                "cite_spans": [
+                    {
+                        "start": 492,
+                        "end": 510,
+                        "text": "(Sun et al., 2023)",
+                        "ref_id": "BIBREF38"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Experiment Setup",
+                "sec_num": "5.1."
+            },
+            {
+                "text": "Comparison with traditional metrics. For a comprehensive evaluation, we incorporated traditional image assessment metrics alongside our human-centric PerceptAnon metric. Specifically, we utilized implementations from the DeepPrivacy (Hukkel\u00e5s et al., 2019) for calculating MSE, PSNR, LPIPS, SSIM, and FID. Notably, the FID metric uses the InceptionV3 (Szegedy et al., 2016) architecture, while the LPIPS metric was based on the AlexNet (Krizhevsky et al., 2012) architecture. Further details and metric descriptions can be found in Appendix F.",
+                "cite_spans": [
+                    {
+                        "start": 233,
+                        "end": 256,
+                        "text": "(Hukkel\u00e5s et al., 2019)",
+                        "ref_id": "BIBREF19"
+                    },
+                    {
+                        "start": 351,
+                        "end": 373,
+                        "text": "(Szegedy et al., 2016)",
+                        "ref_id": "BIBREF39"
+                    },
+                    {
+                        "start": 436,
+                        "end": 461,
+                        "text": "(Krizhevsky et al., 2012)",
+                        "ref_id": "BIBREF22"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Experiment Setup",
+                "sec_num": "5.1."
+            },
+            {
+                "text": "We utilized PyTorch (Paszke et al., 2019) framework and its default ImageNet pretrained models for our implementations. Models were trained on NVIDIA RTX A4500 GPUs, each with 20GB of memory. In main evaluation we use a ResNet50 backbone architecture for all our setups, trained using Stochastic Gradient Descent (SGD) with a momentum of 0.9 and a learning rate of 0.01. We resize images to 224 \u00d7 224 as expected by these architectures.",
+                "cite_spans": [
+                    {
+                        "start": 20,
+                        "end": 41,
+                        "text": "(Paszke et al., 2019)",
+                        "ref_id": "BIBREF31"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Implementation Details",
+                "sec_num": "5.2."
+            },
+            {
+                "text": "Results for HA1 and HA2 correlations across all train and test setups are presented in Tables 1 and 2 respectively, where PerceptAnon, is trained for Regression (mean) -regression on respective HA annotations using mean scores. PerceptAnon consistently has the highest alignment to human scores for anonymity under all training and testing setups and across both HA1 and HA2 as compared to the image quality and similarity metrics. The 'All' train/test setup gives the highest correlations but in most cases this increase over other setups is not significant. Furthermore, the LOOV experiments reinforce the robustness of PerceptAnon against data distribution shifts. When trained on different datasets, PerceptAnon maintains its high correlation with human perception, highlighting its adaptability.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 94,
+                        "end": 95,
+                        "text": "1",
+                        "ref_id": "TABREF1"
+                    },
+                    {
+                        "start": 100,
+                        "end": 101,
+                        "text": "2",
+                        "ref_id": "TABREF2"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Evaluating Alignment with Human Scores",
+                "sec_num": "5.3."
+            },
+            {
+                "text": "In the HA2 setup, where humans assess anonymity by directly comparing original and anonymized images side by side, perceptual differences play a crucial role. Among conventional metrics, LPIPS and SSIM exhibit the strongest correlation with human scores, likely due to their emphasis on perceptual similarity. However, while these metrics effectively measure perceptual differences, they fall short in identifying specific image regions crucial for maintaining anonymity. In contrast, we believe PerceptAnon, is able to not only understand the degree but also the critical areas of information that remain unobfuscated.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Evaluating Alignment with Human Scores",
+                "sec_num": "5.3."
+            },
+            {
+                "text": "It is essential to note that in HA1, PerceptAnon predictions are based solely on the anonymized image, without the original for comparison (which is also the case with HA1 annotations themselves). The existing metrics typically rely on direct comparisons with an original image. Since Percep-tAnon, when trained on HA1, only utilizes the anonymized image, it makes anonymity judgments independently of the original image, possibly capturing semantic details that humans might use to assess anonymity. This ability to discern privacy-sensitive elements without needing a reference highlights the potential of PerceptAnon in evaluating and understanding image anonymization.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Evaluating Alignment with Human Scores",
+                "sec_num": "5.3."
+            },
+            {
+                "text": "Figure 6 shows that PerceptAnon is able to identify privacycompromising cues in image backgrounds. We notice that PerceptAnon is not predicting scores based on arbitrary local regions, but considers important regions related to the subject or background as human vision would. This includes notable background regions, auxiliary items/regions related to subjects, and residual details. In Appendix D we include additional heatmaps scenarios to showcase PerceptAnon's focus on individual items or notable background identifiers.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 7,
+                        "end": 8,
+                        "text": "6",
+                        "ref_id": "FIGREF2"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Evaluating Alignment with Human Scores",
+                "sec_num": "5.3."
+            },
+            {
+                "text": "We notice that PerceptAnon focuses on relevant background cues of various levels and types across our diverse dataset. ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Evaluating Alignment with Human Scores",
+                "sec_num": "5.3."
+            },
+            {
+                "text": "Regression vs. Classification Strategy. When learning image anonymization through human evaluation, we face a pivotal decision: should this be learned as a regression or a classification problem? While regression may be able to capture the subtleties and variations in human perception with its continuous output, classification simplifies this complexity into broader, more generalizable categories. Our results suggest that the classification strategy tends to be more effective in learning anonymity, particularly evident in Kendall's correlation, as shown in Figure 7 . Corresponding Spearman's results can be seen in Figure 10 .",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 570,
+                        "end": 571,
+                        "text": "7",
+                        "ref_id": "FIGREF3"
+                    },
+                    {
+                        "start": 629,
+                        "end": 631,
+                        "text": "10",
+                        "ref_id": "FIGREF5"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Discussions",
+                "sec_num": "5.4."
+            },
+            {
+                "text": "Class Granularity in Quantifying Anonymization. In our study, illustrated in Figure 7 , we evaluate the effects of learning with different levels of score granularity on anonymity assessments. Our findings reveal that finer granularities, such as 10, 5, or 3 class setups, exhibit significantly higher correlation with human perception compared to the binary approach. We believe human perception of anonymity encompasses a range of nuances, which are more effectively captured by models that operate beyond a simple binary classification. This distinctly suggests that from a human perspective, anonymity is not a binary concept but rather a spectrum. In the case of HA2, where there is less uncertaintly with reference image, we noticed a trend where higher granularity levels tend to yield marginally reduced Kendall's correlation, but Spearman's is constant.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 84,
+                        "end": 85,
+                        "text": "7",
+                        "ref_id": "FIGREF3"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Discussions",
+                "sec_num": "5.4."
+            },
+            {
+                "text": "Correlation between HA1 and HA2. We used common anonymization methods (inpaint and blur/pixelate) on the same image sets to compare alignment of PerceptAnon trained on HA1 and HA2 (see Table 3 ). HA2-trained Per-ceptAnon and HA2-trained PerceptAnon use the same set of images, with the only distinction being the annotation process. We believe that HA2-trained PerceptAnon judgments are influenced by the original image context, whereas HA1-trained PerceptAnon focused on detecting any remaining information in the anonymized versions. Since HA1 and HA2 are not perfectly correlated, their differing perspectives highlight the importance of evaluating under both settings to comprehensively assess anonymization. Therefore, we encourage researchers to adopt both approaches in evaluating anonymized images. Computer Vision vs. Human Vision. In the contemporary digital landscape, images are interpreted by both computer vision (CV) and humans, each with distinct capabilities. Our metric is designed to be used alongside traditional CV-based detectability metrics, expanding the assessment to encompass privacy across the entire image content. While detecting individuals is a critical aspect, understanding the broader privacy implications within the entire image is equally important. PerceptAnon addresses this by evaluating privacy-compromising cues remaining within anonymized images. This comprehensive assessment approach aligns more closely with how humans perceive and interact with anonymized images, thereby providing a more thorough understanding of the effectiveness of anonymization techniques.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 191,
+                        "end": 192,
+                        "text": "3",
+                        "ref_id": null
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Discussions",
+                "sec_num": "5.4."
+            },
+            {
+                "text": "Sensitivity to Privacy-Compromising Cues. We showcase a broad selection of anonymized images and PerceptAnon's activation maps in Figure 6 and Appendix D. These examples visually show the cues PerceptAnon detects and overlooks. Our dataset was curated to include a diverse array of images featuring various privacy cues, with train/test splits designed to study identification of cues at different scales. For instance, LOOV scenarios with full-body images focus on large-scale cues such as bicycles, whereas face-only tests concentrate on finer cues like clothing accessories or distinct backgrounds. Nonetheless, thoroughly analyzing subtle privacy-compromising cues remains a complex challenge due to the nuanced aspects of human vision and privacy evaluation. PerceptAnon lays a foundational groundwork for future in-depth exploration and refinement in the field.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 137,
+                        "end": 138,
+                        "text": "6",
+                        "ref_id": "FIGREF2"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Model",
+                "sec_num": null
+            },
+            {
+                "text": "New/unseen Anonymization Methods. GDPR defines pseudonimization as processing data such that the subject is unidentifiable, with masking most feasible for images (Weitzenboeck et al., 2022; Barta, 2018) . Our study focuses on prevalent anonymization techniques in current research and practical use (Hukkel\u00e5s & Lindseth, 2023b; Pachni A., 2022) . Existing methods typically focus on local regions -faces and bodies. In contrast, PerceptAnon evaluates privacy leakages throughout the entire image, including residual objects and background cues. We hypothesize that PerceptAnon effectively assesses privacy leakages beyond these local methods, hence adapt to unseen anonymization methods that continue to act on local regions. Further experimental results supporting this are detailed in Appendix C.",
+                "cite_spans": [
+                    {
+                        "start": 162,
+                        "end": 189,
+                        "text": "(Weitzenboeck et al., 2022;",
+                        "ref_id": "BIBREF42"
+                    },
+                    {
+                        "start": 190,
+                        "end": 202,
+                        "text": "Barta, 2018)",
+                        "ref_id": "BIBREF1"
+                    },
+                    {
+                        "start": 299,
+                        "end": 327,
+                        "text": "(Hukkel\u00e5s & Lindseth, 2023b;",
+                        "ref_id": null
+                    },
+                    {
+                        "start": 328,
+                        "end": 344,
+                        "text": "Pachni A., 2022)",
+                        "ref_id": null
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Model",
+                "sec_num": null
+            },
+            {
+                "text": "Limitations. PerceptAnon, while a step forward in humancentric anonymization assessment, can encounter challenges in accommodating diverse cultural perceptions of privacy and managing images of varied complexity. Further exploration into contextual understanding of images and refining the model's ability to identify subtle cues and background elements is important for anonymity assessment. Furthermore, one improvement can be by enhancing the dataset with more diverse cultural contexts and encapsulate more range in scores. Figure 4 reveals a clustering of human anonymity scores towards the higher end, suggesting perceptions of partial anonymity. While we experimented using weighted CE loss to accodomate for this (see Figure 11 ), there were no substantial performance increases.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 535,
+                        "end": 536,
+                        "text": "4",
+                        "ref_id": "FIGREF4"
+                    },
+                    {
+                        "start": 733,
+                        "end": 735,
+                        "text": "11",
+                        "ref_id": null
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Model",
+                "sec_num": null
+            },
+            {
+                "text": "Through this research, we shed light on the pivotal role of human perception in image anonymization-a facet absent in prior studies. We began by anonymizing images and subsequently collecting human scores to assess the perceived anonymity of the entire image, diverging from the pseudonymization-focused studies that mainly concentrate on re-ID rates in regions with removed PII. To assess (global) anonymity, we utilize traditional image assessment metrics such as SSIM and LPIPS. Our findings reveal that these metrics, not originally designed to capture subjective differences, do not robustly align with the human perspective on image anonymity. Hence, we introduced Percep-tAnon, a learning-based metric which better aligns with human perspective, thus addressing concerns raised by regulations like the General Data Protection Regulation (GDPR). PerceptAnon distinguishes itself by not only comparing original-anonymized pairs, but also its ability to evaluate the anonymity of images without original counterpart, mirroring real-world scenarios where individuals encounter anonymized content devoid of reference images. In future work, our focus will be on expanding PerceptAnon's applicability and robustness, expanding our datatset to improve its generalizability and effectiveness in anonymity assessment.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Conclusion",
+                "sec_num": "6."
+            },
+            {
+                "text": "Choice of CNNs. We initially explored metric learning.We employed backbone architectures and metric learning strategies similar to those used in SemSim (Sun et al., 2023) , specifically utilizing triplet loss and batch hard negative mining to compute the L2 distance between embeddings of original and anonymized images. However, strong CNN performance in early tests led us to adopt these networks as our primary methodology. The robustness of CNNs facilitated a straightforward and interpretable approach, crucial for our objective of evaluating models. Our study does not primarily focus on architectural choices but rather on an exploration of diverse annotation setups and the comprehensive analysis of anonymization methods applied to faces and personal identifiers.",
+                "cite_spans": [
+                    {
+                        "start": 152,
+                        "end": 170,
+                        "text": "(Sun et al., 2023)",
+                        "ref_id": "BIBREF38"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Conclusion",
+                "sec_num": "6."
+            },
+            {
+                "text": "Unseen Anonymization Methods. Established techniques such as masking, blurring, and generating are the predominant in current research and practical applications (Hukkel\u00e5s & Lindseth, 2023b; Zoom Support, 2023; Yang et al., 2022) . While our work aims to establish a foundational understanding of image anonymity using these well-recognized methods, we additionally evaluate how PerceptAnon would fare when faced with new or unseen anonymization methods. We employ another leave-one-out-validation (LOOV) strategy, similar to Section 5.1 and Regression vs. Classification, Class Granularity Figure 10 shows Spearman's correlation results for varying class granularities and regression vs. classification setups (correspondent results are in Figure 7 . Similar to Kendall's, Spearman correlation results also favor classification over regression, but less significantly than Kendall's. Choosing a binary setup is again noticably least performant, but using Spearman's correlation, the changes in granularities of 3, 5, and 10 are less significant compared to Kendall's correlation. Particularly in the case of HA1 in figure 10 , where there is more uncertaintly without reference image, we noticed a trend where higher granularity levels tend to yield marginally better performance. Using Weighted Cross-Entropy Due to the score imbalance observed in Figure 4 , where the majority of images are scored above 5 (on a scale from 0 to 10, with 0 being the lowest and 10 the highest in terms of anonymity), we experimented with using weighted Cross-Entropy (CE) in our classification strategy for the 'All' test/train setup. The comparative results between standard CE and Weighted CE are presented in Figure 11 . On HA1, the trends are consistent for both Spearman's and Kendall's correlations, showing a marginal increase in correlation. However, this trend does not extend to HA2, where we observe a reduced correlation when using weighted CE. ",
+                "cite_spans": [
+                    {
+                        "start": 162,
+                        "end": 190,
+                        "text": "(Hukkel\u00e5s & Lindseth, 2023b;",
+                        "ref_id": null
+                    },
+                    {
+                        "start": 191,
+                        "end": 210,
+                        "text": "Zoom Support, 2023;",
+                        "ref_id": "BIBREF49"
+                    },
+                    {
+                        "start": 211,
+                        "end": 229,
+                        "text": "Yang et al., 2022)",
+                        "ref_id": "BIBREF44"
+                    }
+                ],
+                "ref_spans": [
+                    {
+                        "start": 598,
+                        "end": 600,
+                        "text": "10",
+                        "ref_id": "FIGREF5"
+                    },
+                    {
+                        "start": 748,
+                        "end": 749,
+                        "text": "7",
+                        "ref_id": "FIGREF3"
+                    },
+                    {
+                        "start": 1123,
+                        "end": 1125,
+                        "text": "10",
+                        "ref_id": "FIGREF5"
+                    },
+                    {
+                        "start": 1357,
+                        "end": 1358,
+                        "text": "4",
+                        "ref_id": "FIGREF4"
+                    },
+                    {
+                        "start": 1704,
+                        "end": 1706,
+                        "text": "11",
+                        "ref_id": null
+                    }
+                ],
+                "eq_spans": [],
+                "section": "C. Additional Results",
+                "sec_num": null
+            },
+            {
+                "text": "PSNR, SSIM, and FID scores are inverted because higher values denote more similarity, thus less anonymity, contrary to our anonymity assessment criteria.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "",
+                "sec_num": null
+            }
+        ],
+        "back_matter": [
+            {
+                "text": "This study advances image anonymization by introducing a metric attuned to human perceptions of anonymity. We hope this research encourages future efforts to enhance privacy protection in digital media, considering entire images and guides the ethical use and development of anonymization technologies. ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Impact Statement",
+                "sec_num": null
+            },
+            {
+                "text": "Gen. ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Inpaint",
+                "sec_num": null
+            },
+            {
+                "text": "For all model training, we utilized minor augmentations, including RandomHorizontalFlip and RandomRotation. We deliberately avoided stronger augmentations, such as cutout, to prevent potential confusion in the models or loss of crucial background details necessary for understanding. For instance, employing cutout might lead the model to mistakenly interpret the cutout region as being anonymized. The models were trained over 200 epochs, and we selected the model with the lowest validation loss for subsequent use. Backbone Architectures. We trained PerceptAnon with different backbones, Figure 9 shows the results on the 'All' Train/Test setup. We notices there is no clear trend or significant difference. Notably, using deeper architectures like ResNet152 and DenseNet121 gave higher Kendall's correlation results on HA2. ",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 598,
+                        "end": 599,
+                        "text": "9",
+                        "ref_id": null
+                    }
+                ],
+                "eq_spans": [],
+                "section": "B. Training and Model Details",
+                "sec_num": null
+            },
+            {
+                "text": "Before anonymization, masks are generated with Dual Shot Face Detector (DSFD) (Li et al., 2019) for faces and Mask R-CNN (He et al., 2017) for full body segmentation, chosen for its minimal impact on the surrounding areas. These masks guide targeted anonymization.",
+                "cite_spans": [
+                    {
+                        "start": 78,
+                        "end": 95,
+                        "text": "(Li et al., 2019)",
+                        "ref_id": "BIBREF23"
+                    },
+                    {
+                        "start": 121,
+                        "end": 138,
+                        "text": "(He et al., 2017)",
+                        "ref_id": "BIBREF12"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "E. Anonymization Methods",
+                "sec_num": null
+            },
+            {
+                "text": "Masking or Mask-out involves overlaying a specific region in an image (such as a face or full body) with a mask, which could be a solid color or a pattern.Mathematical Formulation: Given an RGB image I and a mask M (where M (x, y) = 1 for pixels to be masked and 0 otherwise), the anonymized (masked) image I \u2032 is given by:where \u2299 represents elementwise multiplication, and C is a vector representing the RGB color used for masking. In this work, black color is used, so C = (0, 0, 0).",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "E.1. Masking",
+                "sec_num": null
+            },
+            {
+                "text": "Both blurring and pixelation are applied to specific regions of an image as defined by masks. This process involves extracting the regions indicated by the masks, applying the anonymization technique (blurring or pixelation), and then integrating these transformed regions back into the original image. The general process can be defined below:1. For each mask M i defining the region to anonymize, extract the corresponding region from the original image I.2. Apply the desired transformation (blurring or pixelation) to the extracted region.3. Replace the original region in image I with the transformed region to obtain the anonymized image.Mathematical Formulation: Let I be the input image, M i be a mask, and T be the transformation function (either blurring or pixelation). The anonymized image I \u2032 is obtained by:where I Mi is the region of I defined by mask M i , and T (I Mi ) is the transformed region.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "E.2. Blur & Pixelation",
+                "sec_num": null
+            },
+            {
+                "text": "The Gaussian blur transformation T blur on a region I Mi is defined as:where GaussianBlur(\u2022, \u03c3) applies Gaussian blur with standard deviation \u03c3 to the region. We utilize PIL's ImageFilter.GaussianBlur() function (Fredrik Lundh, 2024) and use filter radius equal to 1/8 of the width of the bounding box, as (Dietlmeier et al., 2021) showed it effectively removes all the identifying features.",
+                "cite_spans": [
+                    {
+                        "start": 212,
+                        "end": 233,
+                        "text": "(Fredrik Lundh, 2024)",
+                        "ref_id": "BIBREF7"
+                    },
+                    {
+                        "start": 306,
+                        "end": 331,
+                        "text": "(Dietlmeier et al., 2021)",
+                        "ref_id": "BIBREF3"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "E.2.1. GAUSSIAN BLUR TRANSFORMATION",
+                "sec_num": null
+            },
+            {
+                "text": "The pixelation transformation T pixelate on a region I Mi is defined as:where Pixelate(\u2022, block size) applies pixelation with a block size of 16 \u00d7 16, in line with (Hukkel\u00e5s et al., 2019) .",
+                "cite_spans": [
+                    {
+                        "start": 164,
+                        "end": 187,
+                        "text": "(Hukkel\u00e5s et al., 2019)",
+                        "ref_id": "BIBREF19"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "E.2.2. PIXELATION TRANSFORMATION",
+                "sec_num": null
+            },
+            {
+                "text": "For both inpaint removal and generative methods, we use the same face detectors and segmentation model as traditional method.Inpaint (removal) We utilize DeepFillV2 implementation based off (Yu et al., 2019) , which uses gated convolutions in a coarse-to-fine manner.Generative We use DeepPrivacy2 (Hukkel\u00e5s & Lindseth, 2023a) which offers both face and fulll body anonymization. It is the first work to target full body generative anonymization. This work utilizes dense pose estimation and a style-based GAN.",
+                "cite_spans": [
+                    {
+                        "start": 190,
+                        "end": 207,
+                        "text": "(Yu et al., 2019)",
+                        "ref_id": "BIBREF46"
+                    },
+                    {
+                        "start": 298,
+                        "end": 326,
+                        "text": "(Hukkel\u00e5s & Lindseth, 2023a)",
+                        "ref_id": null
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "E.3. Inpainting & Generative",
+                "sec_num": null
+            },
+            {
+                "text": "Each metric has unique characteristics in terms of how it interprets image similarity or dissimilarity, which is crucial for understanding its implications for image anonymity.Mean Squared Error (MSE): MSE measures the average squared difference between pixels of two images. A lower MSE value indicates greater similarity between the images. In the context of anonymity, a higher MSE is desirable as it suggests that the anonymized image significantly differs from the original.Peak Signal-to-Noise Ratio (PSNR): PSNR is a pixel-level measure of the peak error between two images. Similar to MSE, a lower PSNR indicates more similarity, and thus, for anonymity, a higher PSNR value is preferable.Structural Similarity Index (SSIM): SSIM evaluates the visual impact of changes in luminance, contrast, and structure between two images. SSIM values range from -1 to 1, with higher values indicating more similarity. Therefore, in terms of anonymity, lower SSIM values are better as they imply greater dissimilarity between the original and anonymized images.Learned Perceptual Image Patch Similarity (LPIPS): LPIPS uses deep learning, specifically AlexNet in our evaluation, to estimate perceptual similarity. A lower LPIPS value indicates higher perceptual similarity. For anonymity, a higher LPIPS score is desired, suggesting that the anonymized image is perceptually distinct from the original.Fr\u00e9chet Inception Distance (FID): FID assesses the similarity in the distribution of features extracted by a model from two sets of images. IT is typicaly used to assess the quality of images generated by generative adversarial networks (GANs) (Goodfellow et al., 2014) . A lower FID indicates closer feature distributions, implying similarity. For anonymity purposes, a higher FID score is preferred, indicating a greater dissimilarity in feature distribution between the anonymized and original images.",
+                "cite_spans": [
+                    {
+                        "start": 1640,
+                        "end": 1665,
+                        "text": "(Goodfellow et al., 2014)",
+                        "ref_id": "BIBREF9"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "F. Image Assessment Metrics",
+                "sec_num": null
+            }
+        ],
+        "bib_entries": {
+            "BIBREF0": {
+                "ref_id": "b0",
+                "title": "Attributepreserving face dataset anonymization via latent code optimization",
+                "authors": [
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Barattin",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [],
+                        "last": "Tzelepis",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "I",
+                        "middle": [],
+                        "last": "Patras",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "N",
+                        "middle": [],
+                        "last": "Sebe",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "8001--8010",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Barattin, S., Tzelepis, C., Patras, I., and Sebe, N. Attribute- preserving face dataset anonymization via latent code optimization. In Proceedings of the IEEE/CVF Confer- ence on Computer Vision and Pattern Recognition, pp. 8001-8010, 2023.",
+                "links": null
+            },
+            "BIBREF1": {
+                "ref_id": "b1",
+                "title": "Challenges in the compliance with the general data protection regulation: anonymization of personally identifiable information and related information security concerns. Knowledge-economy-society: business, finance and technology as protection and support for society",
+                "authors": [
+                    {
+                        "first": "G",
+                        "middle": [],
+                        "last": "Barta",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2018,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "115--121",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Barta, G. Challenges in the compliance with the general data protection regulation: anonymization of personally iden- tifiable information and related information security con- cerns. Knowledge-economy-society: business, finance and technology as protection and support for society, pp. 115-121, 2018.",
+                "links": null
+            },
+            "BIBREF2": {
+                "ref_id": "b2",
+                "title": "Privacypreserving inpainting for outsourced image",
+                "authors": [
+                    {
+                        "first": "F",
+                        "middle": [],
+                        "last": "Cao",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Sun",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Luo",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [],
+                        "last": "Qin",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C.-C",
+                        "middle": [],
+                        "last": "Chang",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2021,
+                "venue": "International Journal of Distributed Sensor Networks",
+                "volume": "17",
+                "issue": "11",
+                "pages": "",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Cao, F., Sun, J., Luo, X., Qin, C., and Chang, C.-C. Privacy- preserving inpainting for outsourced image. Interna- tional Journal of Distributed Sensor Networks, 17(11): 15501477211059092, 2021.",
+                "links": null
+            },
+            "BIBREF3": {
+                "ref_id": "b3",
+                "title": "How important are faces for person reidentification?",
+                "authors": [
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Dietlmeier",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Antony",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "K",
+                        "middle": [],
+                        "last": "Mcguinness",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "O'",
+                        "middle": [],
+                        "last": "Connor",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "N",
+                        "middle": [
+                            "E"
+                        ],
+                        "last": "",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2021,
+                "venue": "2020 25th International Conference on Pattern Recognition (ICPR)",
+                "volume": "",
+                "issue": "",
+                "pages": "6912--6919",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Dietlmeier, J., Antony, J., McGuinness, K., and O'Connor, N. E. How important are faces for person re- identification? In 2020 25th International Conference on Pattern Recognition (ICPR), pp. 6912-6919. IEEE, 2021.",
+                "links": null
+            },
+            "BIBREF4": {
+                "ref_id": "b4",
+                "title": "An efficient privacy protection scheme for data security in video surveillance",
+                "authors": [
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Du",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "W",
+                        "middle": [],
+                        "last": "Zhang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Fu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "W",
+                        "middle": [],
+                        "last": "Ren",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Zhang",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2019,
+                "venue": "Journal of visual communication and image representation",
+                "volume": "59",
+                "issue": "",
+                "pages": "347--362",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Du, L., Zhang, W., Fu, H., Ren, W., and Zhang, X. An efficient privacy protection scheme for data security in video surveillance. Journal of visual communication and image representation, 59:347-362, 2019.",
+                "links": null
+            },
+            "BIBREF5": {
+                "ref_id": "b5",
+                "title": "Guidelines on anonymisation: Minsunderstandings related to anonymisation",
+                "authors": [
+                    {
+                        "first": "",
+                        "middle": [],
+                        "last": "Edps",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2021,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "EDPS. Guidelines on anonymisation: Minsunderstandings related to anonymisation. https://edps.europa. eu/system/files/2021-04/21-04-27_ aepd-edps_anonymisation_en_5.pdf, 2021.",
+                "links": null
+            },
+            "BIBREF6": {
+                "ref_id": "b6",
+                "title": "The pascal visual object classes (voc) challenge",
+                "authors": [
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Everingham",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Van Gool",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [
+                            "K"
+                        ],
+                        "last": "Williams",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Winn",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Zisserman",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2010,
+                "venue": "International journal of computer vision",
+                "volume": "88",
+                "issue": "",
+                "pages": "303--338",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Everingham, M., Van Gool, L., Williams, C. K., Winn, J., and Zisserman, A. The pascal visual object classes (voc) challenge. International journal of computer vision, 88: 303-338, 2010.",
+                "links": null
+            },
+            "BIBREF7": {
+                "ref_id": "b7",
+                "title": "Pillow ImageFilter Module",
+                "authors": [
+                    {
+                        "first": "J",
+                        "middle": [
+                            "A C"
+                        ],
+                        "last": "Fredrik Lundh",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2024,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Fredrik Lundh, J. A. C. Pillow ImageFilter Mod- ule. https://pillow.readthedocs.io/en/ stable/reference/ImageFilter.html, 2024. Accessed: Jan 2024.",
+                "links": null
+            },
+            "BIBREF8": {
+                "ref_id": "b8",
+                "title": "Learning new dimensions of human visual similarity using synthetic data",
+                "authors": [
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Fu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "N",
+                        "middle": [],
+                        "last": "Tamir",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Sundaram",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Chai",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Zhang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "T",
+                        "middle": [],
+                        "last": "Dekel",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Isola",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "",
+                        "middle": [],
+                        "last": "Dreamsim",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {
+                    "arXiv": [
+                        "arXiv:2306.09344"
+                    ]
+                },
+                "num": null,
+                "urls": [],
+                "raw_text": "Fu, S., Tamir, N., Sundaram, S., Chai, L., Zhang, R., Dekel, T., and Isola, P. Dreamsim: Learning new dimensions of human visual similarity using synthetic data. arXiv preprint arXiv:2306.09344, 2023.",
+                "links": null
+            },
+            "BIBREF9": {
+                "ref_id": "b9",
+                "title": "Generative adversarial nets",
+                "authors": [
+                    {
+                        "first": "I",
+                        "middle": [],
+                        "last": "Goodfellow",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Pouget-Abadie",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Mirza",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "B",
+                        "middle": [],
+                        "last": "Xu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "D",
+                        "middle": [],
+                        "last": "Warde-Farley",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Ozair",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Courville",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Bengio",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2014,
+                "venue": "Advances in neural information processing systems",
+                "volume": "27",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Goodfellow, I., Pouget-Abadie, J., Mirza, M., Xu, B., Warde-Farley, D., Ozair, S., Courville, A., and Bengio, Y. Generative adversarial nets. Advances in neural informa- tion processing systems, 27, 2014.",
+                "links": null
+            },
+            "BIBREF10": {
+                "ref_id": "b10",
+                "title": "Creating summaries from user videos",
+                "authors": [
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Gygli",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Grabner",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Riemenschneider",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Van Gool",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2014,
+                "venue": "Computer Vision-ECCV 2014: 13th European Conference",
+                "volume": "",
+                "issue": "",
+                "pages": "505--520",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Gygli, M., Grabner, H., Riemenschneider, H., and Van Gool, L. Creating summaries from user videos. In Computer Vision-ECCV 2014: 13th European Conference, Zurich, Switzerland, September 6-12, 2014, Proceedings, Part VII 13, pp. 505-520. Springer, 2014.",
+                "links": null
+            },
+            "BIBREF11": {
+                "ref_id": "b11",
+                "title": "Deep residual learning for image recognition",
+                "authors": [
+                    {
+                        "first": "K",
+                        "middle": [],
+                        "last": "He",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Zhang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Ren",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Sun",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2016,
+                "venue": "Proceedings of the IEEE conference on computer vision and pattern recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "770--778",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "He, K., Zhang, X., Ren, S., and Sun, J. Deep residual learn- ing for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 770-778, 2016.",
+                "links": null
+            },
+            "BIBREF12": {
+                "ref_id": "b12",
+                "title": "Mask rcnn",
+                "authors": [
+                    {
+                        "first": "K",
+                        "middle": [],
+                        "last": "He",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "G",
+                        "middle": [],
+                        "last": "Gkioxari",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Doll\u00e1r",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Girshick",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2017,
+                "venue": "Proceedings of the IEEE international conference on computer vision",
+                "volume": "",
+                "issue": "",
+                "pages": "2961--2969",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "He, K., Gkioxari, G., Doll\u00e1r, P., and Girshick, R. Mask r- cnn. In Proceedings of the IEEE international conference on computer vision, pp. 2961-2969, 2017.",
+                "links": null
+            },
+            "BIBREF13": {
+                "ref_id": "b13",
+                "title": "Diffprivacy: Diffusion-based face privacy protection",
+                "authors": [
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "He",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Zhu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "D",
+                        "middle": [],
+                        "last": "Chen",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "N",
+                        "middle": [],
+                        "last": "Wang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Gao",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {
+                    "arXiv": [
+                        "arXiv:2309.05330"
+                    ]
+                },
+                "num": null,
+                "urls": [],
+                "raw_text": "He, X., Zhu, M., Chen, D., Wang, N., and Gao, X. Diff- privacy: Diffusion-based face privacy protection. arXiv preprint arXiv:2309.05330, 2023.",
+                "links": null
+            },
+            "BIBREF14": {
+                "ref_id": "b14",
+                "title": "Ganonymization: A gan-based face anonymization framework for preserving emotional expressions",
+                "authors": [
+                    {
+                        "first": "F",
+                        "middle": [],
+                        "last": "Hellmann",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Mertes",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Benouis",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Hustinx",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "T.-C",
+                        "middle": [],
+                        "last": "Hsieh",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [],
+                        "last": "Conati",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Krawitz",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "E",
+                        "middle": [],
+                        "last": "Andr\u00e9",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {
+                    "arXiv": [
+                        "arXiv:2305.02143"
+                    ]
+                },
+                "num": null,
+                "urls": [],
+                "raw_text": "Hellmann, F., Mertes, S., Benouis, M., Hustinx, A., Hsieh, T.-C., Conati, C., Krawitz, P., and Andr\u00e9, E. Ganonymization: A gan-based face anonymization frame- work for preserving emotional expressions. arXiv preprint arXiv:2305.02143, 2023.",
+                "links": null
+            },
+            "BIBREF15": {
+                "ref_id": "b15",
+                "title": "Densely connected convolutional networks",
+                "authors": [
+                    {
+                        "first": "G",
+                        "middle": [],
+                        "last": "Huang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "Liu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Van Der Maaten",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "K",
+                        "middle": [
+                            "Q"
+                        ],
+                        "last": "Weinberger",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2017,
+                "venue": "Proceedings of the IEEE conference on computer vision and pattern recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "4700--4708",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Huang, G., Liu, Z., Van Der Maaten, L., and Weinberger, K. Q. Densely connected convolutional networks. In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 4700-4708, 2017.",
+                "links": null
+            },
+            "BIBREF16": {
+                "ref_id": "b16",
+                "title": "Labeled faces in the wild: A database forstudying face recognition in unconstrained environments",
+                "authors": [
+                    {
+                        "first": "G",
+                        "middle": [
+                            "B"
+                        ],
+                        "last": "Huang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Mattar",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "T",
+                        "middle": [],
+                        "last": "Berg",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "E",
+                        "middle": [],
+                        "last": "Learned-Miller",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2008,
+                "venue": "Real-Life'Images: detection",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Huang, G. B., Mattar, M., Berg, T., and Learned-Miller, E. Labeled faces in the wild: A database forstudying face recognition in unconstrained environments. In Workshop on faces in'Real-Life'Images: detection, alignment, and recognition, 2008.",
+                "links": null
+            },
+            "BIBREF17": {
+                "ref_id": "b17",
+                "title": "Deepprivacy2: Towards realistic full-body anonymization",
+                "authors": [
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Hukkel\u00e5s",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "F",
+                        "middle": [],
+                        "last": "Lindseth",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision",
+                "volume": "",
+                "issue": "",
+                "pages": "1329--1338",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Hukkel\u00e5s, H. and Lindseth, F. Deepprivacy2: Towards re- alistic full-body anonymization. In Proceedings of the IEEE/CVF Winter Conference on Applications of Com- puter Vision, pp. 1329-1338, 2023a.",
+                "links": null
+            },
+            "BIBREF18": {
+                "ref_id": "b18",
+                "title": "Does image anonymization impact computer vision training?",
+                "authors": [
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Hukkel\u00e5s",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "F",
+                        "middle": [],
+                        "last": "Lindseth",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "140--150",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Hukkel\u00e5s, H. and Lindseth, F. Does image anonymization impact computer vision training? In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 140-150, 2023b.",
+                "links": null
+            },
+            "BIBREF19": {
+                "ref_id": "b19",
+                "title": "Deepprivacy: A generative adversarial network for face anonymization",
+                "authors": [
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Hukkel\u00e5s",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Mester",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "F",
+                        "middle": [],
+                        "last": "Lindseth",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2019,
+                "venue": "International symposium on visual computing",
+                "volume": "",
+                "issue": "",
+                "pages": "565--578",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Hukkel\u00e5s, H., Mester, R., and Lindseth, F. Deepprivacy: A generative adversarial network for face anonymization. In International symposium on visual computing, pp. 565- 578. Springer, 2019.",
+                "links": null
+            },
+            "BIBREF20": {
+                "ref_id": "b20",
+                "title": "Realistic full-body anonymization with surface-guided gans",
+                "authors": [
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Hukkel\u00e5s",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Smebye",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Mester",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "F",
+                        "middle": [],
+                        "last": "Lindseth",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision",
+                "volume": "",
+                "issue": "",
+                "pages": "1430--1440",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Hukkel\u00e5s, H., Smebye, M., Mester, R., and Lindseth, F. Re- alistic full-body anonymization with surface-guided gans. In Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision, pp. 1430-1440, 2023.",
+                "links": null
+            },
+            "BIBREF21": {
+                "ref_id": "b21",
+                "title": "Blur & track: Real-time face detection with immediate blurring and efficient tracking",
+                "authors": [
+                    {
+                        "first": "T",
+                        "middle": [],
+                        "last": "Jaichuen",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "N",
+                        "middle": [],
+                        "last": "Ren",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Wongapinya",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Fugkeaw",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "2023 20th International Joint Conference on Computer Science and Software Engineering (JCSSE)",
+                "volume": "",
+                "issue": "",
+                "pages": "167--172",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Jaichuen, T., Ren, N., Wongapinya, P., and Fugkeaw, S. Blur & track: Real-time face detection with immediate blurring and efficient tracking. In 2023 20th International Joint Conference on Computer Science and Software En- gineering (JCSSE), pp. 167-172. IEEE, 2023.",
+                "links": null
+            },
+            "BIBREF22": {
+                "ref_id": "b22",
+                "title": "Imagenet classification with deep convolutional neural networks",
+                "authors": [
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Krizhevsky",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "I",
+                        "middle": [],
+                        "last": "Sutskever",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "G",
+                        "middle": [
+                            "E"
+                        ],
+                        "last": "Hinton",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2012,
+                "venue": "Advances in neural information processing systems",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Krizhevsky, A., Sutskever, I., and Hinton, G. E. Imagenet classification with deep convolutional neural networks. Advances in neural information processing systems, 25, 2012.",
+                "links": null
+            },
+            "BIBREF23": {
+                "ref_id": "b23",
+                "title": "Dsfd: dual shot face detector",
+                "authors": [
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Li",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Wang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [],
+                        "last": "Wang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Tai",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Qian",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Yang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [],
+                        "last": "Wang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Li",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "F",
+                        "middle": [],
+                        "last": "Huang",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2019,
+                "venue": "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "5060--5069",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Li, J., Wang, Y., Wang, C., Tai, Y., Qian, J., Yang, J., Wang, C., Li, J., and Huang, F. Dsfd: dual shot face detector. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 5060-5069, 2019.",
+                "links": null
+            },
+            "BIBREF24": {
+                "ref_id": "b24",
+                "title": "Identity-preserving face anonymization via adaptively facial attributes obfuscation",
+                "authors": [
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Li",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Han",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Chen",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Zhang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "B",
+                        "middle": [],
+                        "last": "Han",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Wang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Cao",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2021,
+                "venue": "Proceedings of the 29th ACM international conference on multimedia",
+                "volume": "",
+                "issue": "",
+                "pages": "3891--3899",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Li, J., Han, L., Chen, R., Zhang, H., Han, B., Wang, L., and Cao, X. Identity-preserving face anonymization via adaptively facial attributes obfuscation. In Proceedings of the 29th ACM international conference on multimedia, pp. 3891-3899, 2021.",
+                "links": null
+            },
+            "BIBREF25": {
+                "ref_id": "b25",
+                "title": "Microsoft coco: Common objects in context",
+                "authors": [
+                    {
+                        "first": "T.-Y",
+                        "middle": [],
+                        "last": "Lin",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Maire",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Belongie",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Hays",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Perona",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "D",
+                        "middle": [],
+                        "last": "Ramanan",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Doll\u00e1r",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [
+                            "L"
+                        ],
+                        "last": "Zitnick",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2014,
+                "venue": "Computer Vision-ECCV 2014: 13th European Conference",
+                "volume": "",
+                "issue": "",
+                "pages": "740--755",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Lin, T.-Y., Maire, M., Belongie, S., Hays, J., Perona, P., Ra- manan, D., Doll\u00e1r, P., and Zitnick, C. L. Microsoft coco: Common objects in context. In Computer Vision-ECCV 2014: 13th European Conference, Zurich, Switzerland, September 6-12, 2014, Proceedings, Part V 13, pp. 740- 755. Springer, 2014.",
+                "links": null
+            },
+            "BIBREF26": {
+                "ref_id": "b26",
+                "title": "Deep learning face attributes in the wild",
+                "authors": [
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "Liu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Luo",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Wang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Tang",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2015,
+                "venue": "Proceedings of the IEEE international conference on computer vision",
+                "volume": "",
+                "issue": "",
+                "pages": "3730--3738",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Liu, Z., Luo, P., Wang, X., and Tang, X. Deep learning face attributes in the wild. In Proceedings of the IEEE international conference on computer vision, pp. 3730- 3738, 2015.",
+                "links": null
+            },
+            "BIBREF27": {
+                "ref_id": "b27",
+                "title": "Ciagan: Conditional identity anonymization generative adversarial networks",
+                "authors": [
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Maximov",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "I",
+                        "middle": [],
+                        "last": "Elezi",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Leal-Taix\u00e9",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2020,
+                "venue": "Proceedings of the IEEE/CVF conference on computer vision and pattern recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "5447--5456",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Maximov, M., Elezi, I., and Leal-Taix\u00e9, L. Ciagan: Condi- tional identity anonymization generative adversarial net- works. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition, pp. 5447-5456, 2020.",
+                "links": null
+            },
+            "BIBREF28": {
+                "ref_id": "b28",
+                "title": "Defeating image obfuscation with deep learning",
+                "authors": [
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Mcpherson",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Shokri",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "V",
+                        "middle": [],
+                        "last": "Shmatikov",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2016,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {
+                    "arXiv": [
+                        "arXiv:1609.00408"
+                    ]
+                },
+                "num": null,
+                "urls": [],
+                "raw_text": "McPherson, R., Shokri, R., and Shmatikov, V. Defeating image obfuscation with deep learning. arXiv preprint arXiv:1609.00408, 2016.",
+                "links": null
+            },
+            "BIBREF29": {
+                "ref_id": "b29",
+                "title": "Seeing voices and hearing faces: Cross-modal biometric matching",
+                "authors": [
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Nagrani",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Albanie",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Zisserman",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2018,
+                "venue": "Proceedings of the IEEE conference on computer vision and pattern recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "8427--8436",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Nagrani, A., Albanie, S., and Zisserman, A. Seeing voices and hearing faces: Cross-modal biometric matching. In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 8427-8436, 2018.",
+                "links": null
+            },
+            "BIBREF30": {
+                "ref_id": "b30",
+                "title": "Faceless person recognition: Privacy implications in social media",
+                "authors": [
+                    {
+                        "first": "S",
+                        "middle": [
+                            "J"
+                        ],
+                        "last": "Oh",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Benenson",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Fritz",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "B",
+                        "middle": [],
+                        "last": "Schiele",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2016,
+                "venue": "Pachni A. Blur faces in videos automatically with amazon rekognition video",
+                "volume": "",
+                "issue": "",
+                "pages": "19--35",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Oh, S. J., Benenson, R., Fritz, M., and Schiele, B. Faceless person recognition: Privacy implications in social media. In Computer Vision-ECCV 2016: 14th European Confer- ence, Amsterdam, The Netherlands, October 11-14, 2016, Proceedings, Part III 14, pp. 19-35. Springer, 2016. Pachni A. Blur faces in videos automat- ically with amazon rekognition video. https://aws.amazon.com/blogs/machine-learning/blur- faces-in-videos-automatically-with-amazon- rekognition-video/, 2022.",
+                "links": null
+            },
+            "BIBREF31": {
+                "ref_id": "b31",
+                "title": "Pytorch: An imperative style, high-performance deep learning library",
+                "authors": [
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Paszke",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Gross",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "F",
+                        "middle": [],
+                        "last": "Massa",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Lerer",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Bradbury",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "G",
+                        "middle": [],
+                        "last": "Chanan",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "T",
+                        "middle": [],
+                        "last": "Killeen",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "Lin",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "N",
+                        "middle": [],
+                        "last": "Gimelshein",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Antiga",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2019,
+                "venue": "Advances in neural information processing systems",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Paszke, A., Gross, S., Massa, F., Lerer, A., Bradbury, J., Chanan, G., Killeen, T., Lin, Z., Gimelshein, N., Antiga, L., et al. Pytorch: An imperative style, high-performance deep learning library. Advances in neural information processing systems, 32, 2019.",
+                "links": null
+            },
+            "BIBREF32": {
+                "ref_id": "b32",
+                "title": "Anonym-recognizer: Relationship-preserving face anonymization and recognition",
+                "authors": [
+                    {
+                        "first": "C",
+                        "middle": [],
+                        "last": "Peng",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Wan",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "Miao",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "D",
+                        "middle": [],
+                        "last": "Liu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Zheng",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "N",
+                        "middle": [],
+                        "last": "Wang",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2022,
+                "venue": "Proceedings of the 3rd International Workshop on Human-Centric Multimedia Analysis",
+                "volume": "",
+                "issue": "",
+                "pages": "1--6",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Peng, C., Wan, S., Miao, Z., Liu, D., Zheng, Y., and Wang, N. Anonym-recognizer: Relationship-preserving face anonymization and recognition. In Proceedings of the 3rd International Workshop on Human-Centric Multimedia Analysis, pp. 1-6, 2022.",
+                "links": null
+            },
+            "BIBREF33": {
+                "ref_id": "b33",
+                "title": "Social network de-anonymization and privacy inference with knowledge graph model",
+                "authors": [
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Qian",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X.-Y",
+                        "middle": [],
+                        "last": "Li",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [],
+                        "last": "Zhang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Chen",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "T",
+                        "middle": [],
+                        "last": "Jung",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Han",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2017,
+                "venue": "IEEE Transactions on Dependable and Secure Computing",
+                "volume": "16",
+                "issue": "4",
+                "pages": "679--692",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Qian, J., Li, X.-Y., Zhang, C., Chen, L., Jung, T., and Han, J. Social network de-anonymization and privacy infer- ence with knowledge graph model. IEEE Transactions on Dependable and Secure Computing, 16(4):679-692, 2017.",
+                "links": null
+            },
+            "BIBREF34": {
+                "ref_id": "b34",
+                "title": "Unbiased face synthesis with diffusion models: Are we there yet? arXiv preprint",
+                "authors": [
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Rosenberg",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Ahmed",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "G",
+                        "middle": [
+                            "V"
+                        ],
+                        "last": "Ramesh",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [
+                            "K"
+                        ],
+                        "last": "Vinayak",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "K",
+                        "middle": [],
+                        "last": "Fawaz",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {
+                    "arXiv": [
+                        "arXiv:2309.07277"
+                    ]
+                },
+                "num": null,
+                "urls": [],
+                "raw_text": "Rosenberg, H., Ahmed, S., Ramesh, G. V., Vinayak, R. K., and Fawaz, K. Unbiased face synthesis with diffusion models: Are we there yet? arXiv preprint arXiv:2309.07277, 2023.",
+                "links": null
+            },
+            "BIBREF35": {
+                "ref_id": "b35",
+                "title": "Anonymising interview data: Challenges and compromise in practice",
+                "authors": [
+                    {
+                        "first": "B",
+                        "middle": [],
+                        "last": "Saunders",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Kitzinger",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [],
+                        "last": "Kitzinger",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2015,
+                "venue": "Qualitative research",
+                "volume": "15",
+                "issue": "5",
+                "pages": "616--632",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Saunders, B., Kitzinger, J., and Kitzinger, C. Anonymising interview data: Challenges and compromise in practice. Qualitative research, 15(5):616-632, 2015.",
+                "links": null
+            },
+            "BIBREF36": {
+                "ref_id": "b36",
+                "title": "Fast deanonymization of social networks with structural information",
+                "authors": [
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Shao",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Liu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Shi",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Zhang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "B",
+                        "middle": [],
+                        "last": "Cui",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2019,
+                "venue": "Data Science and Engineering",
+                "volume": "4",
+                "issue": "",
+                "pages": "76--92",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Shao, Y., Liu, J., Shi, S., Zhang, Y., and Cui, B. Fast de- anonymization of social networks with structural infor- mation. Data Science and Engineering, 4:76-92, 2019.",
+                "links": null
+            },
+            "BIBREF37": {
+                "ref_id": "b37",
+                "title": "Summarizing web videos using titles",
+                "authors": [
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Song",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Vallmitjana",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Stent",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Jaimes",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "",
+                        "middle": [],
+                        "last": "Tvsum",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2015,
+                "venue": "Proceedings of the IEEE conference on computer vision and pattern recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "5179--5187",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Song, Y., Vallmitjana, J., Stent, A., and Jaimes, A. Tvsum: Summarizing web videos using titles. In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 5179-5187, 2015.",
+                "links": null
+            },
+            "BIBREF38": {
+                "ref_id": "b38",
+                "title": "Privacy assessment on reconstructed images: Are existing evaluation metrics faithful to human perception?",
+                "authors": [
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Sun",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "N",
+                        "middle": [],
+                        "last": "Gazagnadou",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "V",
+                        "middle": [],
+                        "last": "Sharma",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Lyu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Li",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Zheng",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {
+                    "arXiv": [
+                        "arXiv:2309.13038"
+                    ]
+                },
+                "num": null,
+                "urls": [],
+                "raw_text": "Sun, X., Gazagnadou, N., Sharma, V., Lyu, L., Li, H., and Zheng, L. Privacy assessment on reconstructed images: Are existing evaluation metrics faithful to human percep- tion? arXiv preprint arXiv:2309.13038, 2023.",
+                "links": null
+            },
+            "BIBREF39": {
+                "ref_id": "b39",
+                "title": "Rethinking the inception architecture for computer vision",
+                "authors": [
+                    {
+                        "first": "C",
+                        "middle": [],
+                        "last": "Szegedy",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "V",
+                        "middle": [],
+                        "last": "Vanhoucke",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Ioffe",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Shlens",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "Wojna",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2016,
+                "venue": "Proceedings of the IEEE conference on computer vision and pattern recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "2818--2826",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Szegedy, C., Vanhoucke, V., Ioffe, S., Shlens, J., and Wojna, Z. Rethinking the inception architecture for computer vi- sion. In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 2818-2826, 2016.",
+                "links": null
+            },
+            "BIBREF40": {
+                "ref_id": "b40",
+                "title": "Inpainting in omnidirectional images for privacy protection",
+                "authors": [
+                    {
+                        "first": "E",
+                        "middle": [],
+                        "last": "Upenik",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Akyazi",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Tuzmen",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "T",
+                        "middle": [],
+                        "last": "Ebrahimi",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2019,
+                "venue": "ICASSP 2019-2019 IEEE International Conference on Acoustics, Speech and Signal Processing",
+                "volume": "",
+                "issue": "",
+                "pages": "2487--2491",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Upenik, E., Akyazi, P., Tuzmen, M., and Ebrahimi, T. In- painting in omnidirectional images for privacy protection. In ICASSP 2019-2019 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), pp. 2487-2491. IEEE, 2019.",
+                "links": null
+            },
+            "BIBREF41": {
+                "ref_id": "b41",
+                "title": "Blur vs. block: Investigating the effectiveness of privacy-enhancing obfuscation for images",
+                "authors": [
+                    {
+                        "first": "N",
+                        "middle": [],
+                        "last": "Vishwamitra",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "B",
+                        "middle": [],
+                        "last": "Knijnenburg",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Hu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [
+                            "P"
+                        ],
+                        "last": "Kelly Caine",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2017,
+                "venue": "Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops",
+                "volume": "",
+                "issue": "",
+                "pages": "39--47",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Vishwamitra, N., Knijnenburg, B., Hu, H., Kelly Caine, Y. P., et al. Blur vs. block: Investigating the effectiveness of privacy-enhancing obfuscation for images. In Proceed- ings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops, pp. 39-47, 2017.",
+                "links": null
+            },
+            "BIBREF42": {
+                "ref_id": "b42",
+                "title": "The gdpr and unstructured data: is anonymization possible?",
+                "authors": [
+                    {
+                        "first": "E",
+                        "middle": [
+                            "M"
+                        ],
+                        "last": "Weitzenboeck",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Lison",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Cyndecka",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Langford",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2022,
+                "venue": "International Data Privacy Law",
+                "volume": "12",
+                "issue": "3",
+                "pages": "184--206",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Weitzenboeck, E. M., Lison, P., Cyndecka, M., and Lang- ford, M. The gdpr and unstructured data: is anonymiza- tion possible? International Data Privacy Law, 12(3): 184-206, 2022.",
+                "links": null
+            },
+            "BIBREF43": {
+                "ref_id": "b43",
+                "title": "Anonymisation and visual images: issues of respect,'voice'and protection",
+                "authors": [
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Wiles",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Coffey",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Robinson",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Heath",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2012,
+                "venue": "International Journal of Social Research Methodology",
+                "volume": "15",
+                "issue": "1",
+                "pages": "41--53",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Wiles, R., Coffey, A., Robinson, J., and Heath, S. Anonymi- sation and visual images: issues of respect,'voice'and protection. International Journal of Social Research Methodology, 15(1):41-53, 2012.",
+                "links": null
+            },
+            "BIBREF44": {
+                "ref_id": "b44",
+                "title": "A study of face obfuscation in imagenet",
+                "authors": [
+                    {
+                        "first": "K",
+                        "middle": [],
+                        "last": "Yang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [
+                            "H"
+                        ],
+                        "last": "Yau",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Fei-Fei",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Deng",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "O",
+                        "middle": [],
+                        "last": "Russakovsky",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2022,
+                "venue": "International Conference on Machine Learning",
+                "volume": "",
+                "issue": "",
+                "pages": "25313--25330",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Yang, K., Yau, J. H., Fei-Fei, L., Deng, J., and Russakovsky, O. A study of face obfuscation in imagenet. In Inter- national Conference on Machine Learning, pp. 25313- 25330. PMLR, 2022.",
+                "links": null
+            },
+            "BIBREF45": {
+                "ref_id": "b45",
+                "title": "Wider face: A face detection benchmark",
+                "authors": [
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Yang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Luo",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C.-C",
+                        "middle": [],
+                        "last": "Loy",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Tang",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2016,
+                "venue": "Proceedings of the IEEE conference on computer vision and pattern recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "5525--5533",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Yang, S., Luo, P., Loy, C.-C., and Tang, X. Wider face: A face detection benchmark. In Proceedings of the IEEE conference on computer vision and pattern recognition, pp. 5525-5533, 2016.",
+                "links": null
+            },
+            "BIBREF46": {
+                "ref_id": "b46",
+                "title": "Free-form image inpainting with gated convolution",
+                "authors": [
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Yu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "Lin",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Yang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Shen",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Lu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "T",
+                        "middle": [
+                            "S"
+                        ],
+                        "last": "Huang",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2019,
+                "venue": "Proceedings of the IEEE International Conference on Computer Vision",
+                "volume": "",
+                "issue": "",
+                "pages": "4471--4480",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Yu, J., Lin, Z., Yang, J., Shen, X., Lu, X., and Huang, T. S. Free-form image inpainting with gated convolution. In Proceedings of the IEEE International Conference on Computer Vision, pp. 4471-4480, 2019.",
+                "links": null
+            },
+            "BIBREF47": {
+                "ref_id": "b47",
+                "title": "Pro-face: A generic framework for privacy-preserving recognizable obfuscation of face images",
+                "authors": [
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Yuan",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Liu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Pu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "Li",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Li",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Gao",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2022,
+                "venue": "Proceedings of the 30th ACM International Conference on Multimedia",
+                "volume": "",
+                "issue": "",
+                "pages": "1661--1669",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Yuan, L., Liu, L., Pu, X., Li, Z., Li, H., and Gao, X. Pro-face: A generic framework for privacy-preserving recognizable obfuscation of face images. In Proceedings of the 30th ACM International Conference on Multimedia, pp. 1661- 1669, 2022.",
+                "links": null
+            },
+            "BIBREF48": {
+                "ref_id": "b48",
+                "title": "Deblurring by realistic blurring",
+                "authors": [
+                    {
+                        "first": "K",
+                        "middle": [],
+                        "last": "Zhang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "W",
+                        "middle": [],
+                        "last": "Luo",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Zhong",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Ma",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "B",
+                        "middle": [],
+                        "last": "Stenger",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "W",
+                        "middle": [],
+                        "last": "Liu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Li",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2020,
+                "venue": "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "2737--2746",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Zhang, K., Luo, W., Zhong, Y., Ma, L., Stenger, B., Liu, W., and Li, H. Deblurring by realistic blurring. In Proceed- ings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 2737-2746, 2020.",
+                "links": null
+            },
+            "BIBREF49": {
+                "ref_id": "b49",
+                "title": "Zoom: Using blurred background",
+                "authors": [
+                    {
+                        "first": "Zoom",
+                        "middle": [],
+                        "last": "Support",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": null,
+                "urls": [],
+                "raw_text": "Zoom Support. Zoom: Using blurred background. https: //support.zoom.com/hc/en/article?id= zm_kb&sysparm_article=KB0061066, 2023.",
+                "links": null
+            }
+        },
+        "ref_entries": {
+            "FIGREF0": {
+                "type_str": "figure",
+                "num": null,
+                "uris": null,
+                "fig_num": "3",
+                "text": "Figure 3. Local vs. Global Scopes. Local views focus solely on anonymized PII, excluding background. Global only sanitizes PII but retains background. Local mask is not considered."
+            },
+            "FIGREF1": {
+                "type_str": "figure",
+                "num": null,
+                "uris": null,
+                "fig_num": "45",
+                "text": "Figure 4. Distribution of human scores by anonymization method and scope (global/local). Generative method was not considered in HA1, and Mask was not in HA2."
+            },
+            "FIGREF2": {
+                "type_str": "figure",
+                "num": null,
+                "uris": null,
+                "fig_num": "6",
+                "text": "Figure 6. Sample GRAD-CAM visualizations using PerceptAnon (10-class) classification model trained on 'all' train/test setup (HA1). More examples are provided in Appendix D."
+            },
+            "FIGREF3": {
+                "type_str": "figure",
+                "num": null,
+                "uris": null,
+                "fig_num": "7",
+                "text": "Figure 7. Correlation to human scores across different granularities of anonymization scores (10-class, 5-class, 3-class, binary) and training methods (Regression vs. Classification) for PerceptAnon. Results are based on the 'All' train/test setup. Corresponding Spearman's results are in Appendix C (Figure 10)."
+            },
+            "FIGREF4": {
+                "type_str": "figure",
+                "num": null,
+                "uris": null,
+                "fig_num": "4",
+                "text": "Correlation of various metrics with human anonymity mean score -Regression (mean) on HA1, assessed using Spearman's (\u03c1) and Kendall's (\u03c4 ) correlations. Results are for Leave-One-Out Validation (LOOV) on anonymization methods where LOOV-Mask indicates using Masking as the test dataset and remaining as train."
+            },
+            "FIGREF5": {
+                "type_str": "figure",
+                "num": null,
+                "uris": null,
+                "fig_num": "10",
+                "text": "Figure 10. Corresponding Spearman's correlation results to Figure 7. Correlation to human scores across different granularities of anonymization scores (10-class, 5-class, 3-class, binary) and training methods (Regression vs. Classification) for PerceptAnon. Results are based on the 'All' train/test setup."
+            },
+            "FIGREF6": {
+                "type_str": "figure",
+                "num": null,
+                "uris": null,
+                "fig_num": null,
+                "text": "Figure 11. Performance of Cross-Entropy (CE) vs. Weighted Cross-Entropy loss (Weighted CE) for classification on different class granularities of anonymization scores. Results are on the 'All' train/test setup."
+            },
+            "FIGREF7": {
+                "type_str": "figure",
+                "num": null,
+                "uris": null,
+                "fig_num": "12",
+                "text": "Figure 12. Sample GRAD-CAM visualizations from our dataset using PerceptAnon (10-class) classification model trained on 'all' setup (HA1). We showcase each source dataset (VOC, COCO, LFW, CelebA) images seperately."
+            },
+            "TABREF1": {
+                "type_str": "table",
+                "num": null,
+                "html": null,
+                "content": "<table><tr><td>Train/Test Setup</td><td>Metrics</td><td>PSNR</td><td>MSE</td><td>LPIPS</td><td>SSIM</td><td>FID</td><td>PerceptAnon (Ours)</td></tr><tr><td>All</td><td>\u03c1 \u03c4</td><td>-0.7011 -0.5018</td><td>0.7011 0.5018</td><td>0.7675 0.5544</td><td>-0.8358 -0.7601</td><td>0.6578 0.4667</td><td>0.8817 0.7119</td></tr><tr><td>LOOV-VOC</td><td>\u03c1 \u03c4</td><td>-0.7448 -0.5437</td><td>0.7448 0.5437</td><td>0.8244 0.6288</td><td>-0.8185 -0.6289</td><td>0.6995 0.5095</td><td>0.8603 0.6570</td></tr><tr><td>LOOV-COCO</td><td>\u03c1 \u03c4</td><td>-0.771 -0.5649</td><td>0.771 0.5649</td><td>0.805 0.6051</td><td>-0.7702 -0.5712</td><td>0.733 0.5385</td><td>0.8643 0.6845</td></tr><tr><td>LOOV-LFW</td><td>\u03c1 \u03c4</td><td>-0.7354 -0.5256</td><td>0.7354 0.5256</td><td>0.7574 0.5487</td><td>-0.7615 -0.5509</td><td>0.7289 0.5141</td><td>0.8278 0.6353</td></tr><tr><td>LOOV-CelebA</td><td>\u03c1 \u03c4</td><td>-0.6239 -0.4407</td><td>0.6239 0.4407</td><td>0.7301 0.5151</td><td>-0.7321 -0.518</td><td>0.6634 0.4594</td><td>0.8478 0.6549</td></tr><tr><td>Task-Person</td><td>\u03c1 \u03c4</td><td>-0.7313 -0.524</td><td>0.7313 0.524</td><td>0.7909 0.5929</td><td>-0.75 -0.5452</td><td>0.6858 0.4971</td><td>0.8831 0.7120</td></tr><tr><td>Task-Face</td><td>\u03c1 \u03c4</td><td>-0.7547 -0.5528</td><td>0.7547 0.5528</td><td>0.7906 0.5887</td><td>-0.7838 -0.5825</td><td>0.7447 0.547</td><td>0.8774 0.6940</td></tr><tr><td>Train/Test Setup</td><td>Metrics</td><td>PSNR</td><td>MSE</td><td>LPIPS</td><td>SSIM</td><td>FID</td><td>PerceptAnon (Ours)</td></tr><tr><td>All</td><td>\u03c1 \u03c4</td><td>-0.7631 -0.5434</td><td>0.7631 0.5434</td><td>0.7622 0.5385</td><td>-0.7655 -0.5448</td><td>0.6444 0.4456</td><td>0.8421 0.6477</td></tr><tr><td>LOOV-VOC</td><td>\u03c1 \u03c4</td><td>-0.7833 -0.575</td><td>0.7833 0.575</td><td>0.7869 0.5694</td><td>-0.7971 -0.5827</td><td>0.6203 0.4338</td><td>0.8218 0.6211</td></tr><tr><td>LOOV-COCO</td><td>\u03c1 \u03c4</td><td>-0.7941 -0.5842</td><td>0.7941 0.5842</td><td>0.7851 0.5713</td><td>-0.785 -0.5739</td><td>0.6478 0.4559</td><td>0.8404 0.6456</td></tr><tr><td>LOOV-LFW</td><td>\u03c1 \u03c4</td><td>-0.7551 -0.5243</td><td>0.7551 0.5243</td><td>0.7137 0.4683</td><td>-0.7358 -0.5001</td><td>0.7032 0.4536</td><td>0.8462 0.6495</td></tr><tr><td>LOOV-CelebA</td><td>\u03c1 \u03c4</td><td>-0.7157 -0.4875</td><td>0.7157 0.4875</td><td>0.7082 0.4753</td><td>-0.7542 -0.5354</td><td>0.679 0.4569</td><td>0.8250 0.6270</td></tr><tr><td>Task-Person</td><td>\u03c1 \u03c4</td><td>-0.7757 -0.5647</td><td>0.7757 0.5647</td><td>0.7833 0.5668</td><td>-0.7997 -0.5872</td><td>0.6408 0.4477</td><td>0.8320 0.6328</td></tr><tr><td>Task-Face</td><td>\u03c1 \u03c4</td><td>-0.7435 -0.5154</td><td>0.7435 0.5154</td><td>0.6956 0.4537</td><td>-0.7623 -0.5387</td><td>0.6756 0.4454</td><td>0.8590 0.6675</td></tr></table>",
+                "text": "Correlation of various metrics with human anonymity mean score -Regression (mean) on HA1, assessed using Spearman's (\u03c1) and Kendall's (\u03c4 ) correlations. PerceptAnon is trained via regression on mean human scores. Results reflect test set correlations across three strategies: the entire dataset ('All'), Leave-One-Out Validation (LOOV), and task-specific setups (person or face). LOOV-VOC indicates VOC as the test dataset and remaining as train, and Task-Person for person-anonymized images only."
+            },
+            "TABREF2": {
+                "type_str": "table",
+                "num": null,
+                "html": null,
+                "content": "<table/>",
+                "text": "Correlation of various metrics with human anonymity mean scores on HA2, following the same evaluation setup as Table1"
+            },
+            "TABREF4": {
+                "type_str": "table",
+                "num": null,
+                "html": null,
+                "content": "<table><tr><td>Train/Test Setup</td><td>Metrics</td><td>PSNR</td><td>MSE</td><td>LPIPS</td><td>SSIM</td><td>FID</td><td>PerceptAnon (Ours)</td></tr><tr><td>LOOV-BlurPix</td><td>\u03c1 \u03c4</td><td>-0.8191 -0.6167</td><td>0.8191 0.6167</td><td>0.8106 0.6053</td><td>-0.8071 -0.6020</td><td>0.6577 0.4638</td><td>0.8862 0.7192</td></tr><tr><td>LOOV-Inpaint</td><td>\u03c1 \u03c4</td><td>-0.7947 -0.5850</td><td>0.7947 0.5850</td><td>0.8004 0.5927</td><td>-0.7791 -0.5615</td><td>0.7088 0.5181</td><td>0.8646 0.6907</td></tr><tr><td>LOOV-Mask</td><td>\u03c1 \u03c4</td><td>-0.1780 -0.1240</td><td>0.1780 0.1240</td><td>0.2703 0.1926</td><td>-0.2957 -0.2125</td><td>0.2949 0.2055</td><td>0.5816 0.4275</td></tr></table>",
+                "text": "Table1, where one anonymization method is excluded from the training set and introduced only in the test set. For instance, in the LOOV-Mask scenario, we train on inpainted and blur/pixelated images, and test on masked images. Results shown in Table4indicate that PerceptAnon maintains robust performance but struggles with masked images, as masking removes all underlying information, unlike blurring or pixelation which preserves more context. This highlights PerceptAnon's potential utility with unseen anonymization techniques, although its performance can vary based on the nature of the anonymization method used. Future work can build on PerceptAnon's adaptability to new methods by expanding our dataset to include them."
+            }
+        }
+    }
+}
