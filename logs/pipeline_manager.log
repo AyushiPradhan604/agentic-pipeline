@@ -1,0 +1,103 @@
+2025-11-01 09:23:31,819 — pipeline_manager — INFO — LLM client created using backend: transformers
+2025-11-01 09:23:31,821 — pipeline_manager — INFO — Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 09:23:32,095 — pipeline_manager — INFO — Parsed 21 pages and 0 images
+2025-11-01 09:29:20,430 — pipeline_manager — INFO — LLM client created using backend: none
+2025-11-01 09:29:20,432 — pipeline_manager — INFO — Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 09:29:20,620 — pipeline_manager — INFO — Parsed 21 pages and 0 images
+2025-11-01 09:29:20,639 — pipeline_manager — INFO — Cleaned page texts
+2025-11-01 09:29:20,652 — pipeline_manager — INFO — Identified 123 sections (heuristic+LLM)
+2025-11-01 09:29:20,654 — pipeline_manager — INFO — Mapped images to sections
+2025-11-01 09:30:42,597 — pipeline_manager — INFO — LLM client created using backend: none
+2025-11-01 09:30:42,599 — pipeline_manager — INFO — Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 09:30:42,788 — pipeline_manager — INFO — Parsed 21 pages and 0 images
+2025-11-01 09:30:42,835 — pipeline_manager — INFO — Cleaned page texts
+2025-11-01 09:30:42,846 — pipeline_manager — INFO — Identified 123 sections (heuristic+LLM)
+2025-11-01 09:30:42,848 — pipeline_manager — INFO — Mapped images to sections
+2025-11-01 09:30:42,917 — pipeline_manager — INFO — Formatted poster dataclass
+2025-11-01 09:30:42,930 — pipeline_manager — INFO — Wrote poster JSON (data/outputs\poster.json) and Markdown preview (data/outputs\poster_preview.md)
+2025-11-01 09:30:42,932 — pipeline_manager — INFO — Pipeline finished
+2025-11-01 09:35:21,105 — pipeline_manager — INFO — LLM client created using backend: none
+2025-11-01 09:35:21,108 — pipeline_manager — INFO — Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 09:35:21,338 — pipeline_manager — INFO — Parsed 21 pages and 0 images
+2025-11-01 09:35:21,355 — pipeline_manager — INFO — Cleaned page texts
+2025-11-01 09:35:21,366 — pipeline_manager — INFO — Identified 123 sections (heuristic+LLM)
+2025-11-01 09:35:21,367 — pipeline_manager — INFO — Mapped images to sections
+2025-11-01 09:35:21,491 — pipeline_manager — INFO — Formatted poster dataclass
+2025-11-01 09:35:21,503 — pipeline_manager — INFO — Wrote poster JSON (data/outputs\poster.json) and Markdown preview (data/outputs\poster_preview.md)
+2025-11-01 09:35:21,504 — pipeline_manager — INFO — Pipeline finished
+2025-11-01 09:36:26,709 — pipeline_manager — INFO — LLM client created using backend: none
+2025-11-01 09:36:26,712 — pipeline_manager — INFO — Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 09:36:26,936 — pipeline_manager — INFO — Parsed 21 pages and 0 images
+2025-11-01 09:36:26,952 — pipeline_manager — INFO — Cleaned page texts
+2025-11-01 09:36:26,964 — pipeline_manager — INFO — Identified 123 sections (heuristic+LLM)
+2025-11-01 09:36:26,964 — pipeline_manager — INFO — Mapped images to sections
+2025-11-01 09:36:27,006 — pipeline_manager — INFO — Formatted poster dataclass
+2025-11-01 09:36:27,017 — pipeline_manager — INFO — Wrote poster JSON (data/outputs\poster.json) and Markdown preview (data/outputs\poster_preview.md)
+2025-11-01 09:36:27,018 — pipeline_manager — INFO — Pipeline finished
+2025-11-01 09:38:11,091 — pipeline_manager — INFO — LLM client created using backend: none
+2025-11-01 09:38:11,094 — pipeline_manager — INFO — Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 09:38:11,326 — pipeline_manager — INFO — Parsed 21 pages and 0 images
+2025-11-01 09:38:11,343 — pipeline_manager — INFO — Cleaned page texts
+2025-11-01 09:38:11,356 — pipeline_manager — INFO — Identified 123 sections (heuristic+LLM)
+2025-11-01 09:38:11,356 — pipeline_manager — INFO — Mapped images to sections
+2025-11-01 09:38:11,410 — pipeline_manager — INFO — Formatted poster dataclass
+2025-11-01 09:38:11,421 — pipeline_manager — INFO — Wrote poster JSON (data/outputs\poster.json) and Markdown preview (data/outputs\poster_preview.md)
+2025-11-01 09:38:11,422 — pipeline_manager — INFO — Pipeline finished
+2025-11-01 09:41:45,736 — pipeline_manager — INFO — LLM client created using backend: openai
+2025-11-01 09:41:45,738 — pipeline_manager — INFO — Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 09:41:45,962 — pipeline_manager — INFO — Parsed 21 pages and 0 images
+2025-11-01 09:41:45,978 — pipeline_manager — INFO — Cleaned page texts
+2025-11-01 09:41:51,801 — pipeline_manager — INFO — Identified 123 sections (heuristic+LLM)
+2025-11-01 09:41:51,802 — pipeline_manager — INFO — Mapped images to sections
+2025-11-01 09:45:44,695 — pipeline_manager — INFO — ✅ LLM client initialized using local Qwen model.
+2025-11-01 09:45:44,697 — pipeline_manager — INFO — 🚀 Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 09:45:44,884 — pipeline_manager — INFO — Parsed 21 pages and 0 images
+2025-11-01 09:45:44,900 — pipeline_manager — INFO — Cleaned page texts
+2025-11-01 09:45:44,911 — pipeline_manager — INFO — Identified 123 sections (heuristic + LLM if available)
+2025-11-01 09:45:44,912 — pipeline_manager — INFO — Mapped images to sections
+2025-11-01 09:45:44,969 — pipeline_manager — INFO — Formatted poster dataclass
+2025-11-01 09:45:44,979 — pipeline_manager — INFO — Saved JSON → data/outputs\poster.json
+2025-11-01 09:45:44,980 — pipeline_manager — INFO — Saved Markdown → data/outputs\poster_preview.md
+2025-11-01 09:45:44,981 — pipeline_manager — INFO — ✅ Pipeline finished successfully.
+2025-11-01 09:51:46,187 — pipeline_manager — WARNING — No valid LLM backend configured ('none'). Running heuristic-only.
+2025-11-01 09:51:46,189 — pipeline_manager — INFO — 🚀 Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 09:51:46,374 — pipeline_manager — INFO — Parsed 21 pages and 0 images
+2025-11-01 09:51:46,392 — pipeline_manager — INFO — Cleaned page texts
+2025-11-01 09:51:46,401 — pipeline_manager — INFO — Identified 123 sections (heuristic + LLM if available)
+2025-11-01 09:51:46,402 — pipeline_manager — INFO — Mapped images to sections
+2025-11-01 09:51:46,412 — pipeline_manager — INFO — Formatted poster dataclass
+2025-11-01 09:51:46,423 — pipeline_manager — INFO — Saved JSON → data/outputs\poster.json
+2025-11-01 09:51:46,424 — pipeline_manager — INFO — Saved Markdown → data/outputs\poster_preview.md
+2025-11-01 09:51:46,424 — pipeline_manager — INFO — ✅ Pipeline finished successfully.
+2025-11-01 09:55:37,387 — pipeline_manager — WARNING — No valid LLM backend configured ('none'). Running heuristic-only.
+2025-11-01 09:55:37,388 — pipeline_manager — INFO — 🚀 Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 09:55:37,575 — pipeline_manager — INFO — Parsed 21 pages and 0 images
+2025-11-01 09:55:37,592 — pipeline_manager — INFO — Cleaned page texts
+2025-11-01 09:55:37,604 — pipeline_manager — INFO — Identified 123 sections (heuristic + LLM if available)
+2025-11-01 09:55:37,605 — pipeline_manager — INFO — Mapped images to sections
+2025-11-01 09:55:37,613 — pipeline_manager — INFO — Formatted poster dataclass
+2025-11-01 09:55:37,624 — pipeline_manager — INFO — Saved JSON → data/outputs\poster.json
+2025-11-01 09:55:37,625 — pipeline_manager — INFO — Saved Markdown → data/outputs\poster_preview.md
+2025-11-01 09:55:37,626 — pipeline_manager — INFO — ✅ Pipeline finished successfully.
+2025-11-01 09:56:35,003 — pipeline_manager — WARNING — No valid LLM backend configured ('none'). Running heuristic-only.
+2025-11-01 09:56:35,005 — pipeline_manager — INFO — 🚀 Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 09:56:35,199 — pipeline_manager — INFO — Parsed 21 pages and 0 images
+2025-11-01 09:56:35,216 — pipeline_manager — INFO — Cleaned page texts
+2025-11-01 09:56:35,225 — pipeline_manager — INFO — Identified 123 sections (heuristic + LLM if available)
+2025-11-01 09:56:35,226 — pipeline_manager — INFO — Mapped images to sections
+2025-11-01 09:56:35,236 — pipeline_manager — INFO — Formatted poster dataclass
+2025-11-01 09:56:35,248 — pipeline_manager — INFO — Saved JSON → data/outputs\poster.json
+2025-11-01 09:56:35,249 — pipeline_manager — INFO — Saved Markdown → data/outputs\poster_preview.md
+2025-11-01 09:56:35,250 — pipeline_manager — INFO — ✅ Pipeline finished successfully.
+2025-11-01 10:11:29,257 — pipeline_manager — WARNING — No valid LLM backend configured ('none'). Running heuristic-only.
+2025-11-01 10:11:29,260 — pipeline_manager — INFO — 🚀 Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 10:16:21,254 — pipeline_manager — WARNING — No valid LLM backend configured ('none'). Running heuristic-only.
+2025-11-01 10:16:21,256 — pipeline_manager — INFO — 🚀 Starting pipeline for PDF: data/samples/2.pdf
+2025-11-01 10:16:23,372 — pipeline_manager — INFO — Parsed 27 pages and 10 images
+2025-11-01 10:16:23,398 — pipeline_manager — INFO — Cleaned page texts
+2025-11-01 10:16:23,406 — pipeline_manager — INFO — Identified 96 sections (heuristic + LLM if available)
+2025-11-01 10:16:23,407 — pipeline_manager — INFO — Mapped images to sections
+2025-11-01 10:16:23,416 — pipeline_manager — INFO — Formatted poster dataclass
+2025-11-01 10:16:23,427 — pipeline_manager — INFO — Saved JSON → data/outputs\poster.json
+2025-11-01 10:16:23,428 — pipeline_manager — INFO — Saved Markdown → data/outputs\poster_preview.md
+2025-11-01 10:16:23,429 — pipeline_manager — INFO — ✅ Pipeline finished successfully.

@@ -1,137 +1,195 @@
+# pipeline/pipeline_manager.py
 """
-pipeline/pipeline_manager.py
-----------------------------
-Handles orchestration of all three agents sequentially:
-1. SectionIdentifier
-2. SummarizerAgent
-3. PosterFormatter
-Supports both PDF and JSON input.
+PipelineManager
+- Orchestrates the full run: parse PDF -> clean -> identify sections -> map images -> summarize -> format poster
+- Writes outputs to configured output_dir (default: data/outputs)
 """
 
+from typing import Optional, List, Tuple
 import os
+import logging
 import yaml
-import json
-from utils.logger import get_logger
+import re
 
-# Import the three agents
+# agent modules
 from agents.section_identifier import SectionIdentifier
 from agents.summarizer_agent import SummarizerAgent
 from agents.poster_formatter import PosterFormatter
 
+# utils
+from utils.logger import setup_logging
+from utils.pdf_parser import parse_pdf_to_pages_and_images
+from utils.text_cleaner import clean_pages_text
+from utils.image_handler import associate_images_to_sections
+from utils.llm_client import LLMClient  # ✅ using local Qwen client
+
+# dataclasses
+from agents import Section, Poster
+
+logger = logging.getLogger(__name__)
+
 
 class PipelineManager:
-    def __init__(self, config_path: str = "configs/config.yaml"):
+    def __init__(self, config_path: str = "config/config.yaml"):
         """
-        Initialize the pipeline with configuration and agent setup.
+        Load configuration and prepare components.
         """
-        self.logger = get_logger(__name__)
-        self.logger.info("Initializing PipelineManager...")
+        self.config = self._load_config(config_path)
+        self.logger = setup_logging("pipeline_manager")
+        self.output_dir = self.config.get("paths", {}).get("outputs_dir", "data/outputs")
+        os.makedirs(self.output_dir, exist_ok=True)
 
-        # Load YAML configuration
-        if not os.path.exists(config_path):
-            raise FileNotFoundError(f"❌ Config file not found at {config_path}")
-        with open(config_path, "r", encoding="utf-8") as f:
-            self.config = yaml.safe_load(f)
+                # ✅ Initialize local Qwen LLM client if backend = qwen-local
+        backend = self.config.get("llm", {}).get("backend", "none")
 
-        # Initialize all agents
-        self.section_identifier = SectionIdentifier(config_path)
-        self.summarizer = SummarizerAgent(config_path)
-        self.poster_formatter = PosterFormatter(config_path)
-
-        self.logger.info("✅ All agents initialized successfully.")
-
-    # -------------------------------------------------------------------------
-    def run_pipeline(self, input_path: str, input_type: str = "json", output_dir: str = "data/outputs/"):
-        """
-        Runs the complete 3-step Agentic AI pipeline.
-        Supports both JSON and PDF input formats.
-        """
-        self.logger.info(f"🚀 Running pipeline for file: {input_path}")
-
-        # ----------------------------
-        # STEP 1: Load or extract sections
-        # ----------------------------
-        self.logger.info("🔹 Step 1: Identifying sections...")
-
-        if input_type.lower() == "json":
-            self.logger.info("📘 Reading sections directly from JSON input...")
-            with open(input_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-
-            sections_list = []
-
-            # 1️⃣ Extract abstract
-            if "pdf_parse" in data and "abstract" in data["pdf_parse"]:
-                for abs_item in data["pdf_parse"]["abstract"]:
-                    text = abs_item.get("text", "").strip()
-                    if text:
-                        sections_list.append({"section": "Abstract", "text": text})
-
-            # 2️⃣ Extract body_text sections
-            if "pdf_parse" in data and "body_text" in data["pdf_parse"]:
-                for item in data["pdf_parse"]["body_text"]:
-                    section_name = item.get("section", "Body")
-                    text = item.get("text", "").strip()
-                    if text:
-                        sections_list.append({"section": section_name, "text": text})
-
-            # 3️⃣ Fallback / Validation
-            if not sections_list:
-                raise ValueError("❌ JSON does not contain valid 'pdf_parse' → 'abstract' or 'body_text' sections.")
-
-            section_names = [s.get("section", f"Section_{i}") for i, s in enumerate(sections_list)]
-
-        elif input_type.lower() == "pdf":
-            self.logger.info("📄 Extracting text from PDF using SectionIdentifier...")
-            sections = self.section_identifier.process(input_path)
-
-            # Normalize to list format
-            if isinstance(sections, dict):
-                section_names = list(sections.keys())
-                sections_list = [{"section": k, "text": v} for k, v in sections.items()]
-            elif isinstance(sections, list):
-                section_names = [s.get("section", f"Section_{i}") for i, s in enumerate(sections)]
-                sections_list = sections
+        try:
+            if backend == "qwen_local" or backend == "qwen-local":
+                self.llm_client = LLMClient(model_path=self.config["llm"]["model_path"])
+                self.logger.info("✅ LLM client initialized using local Qwen model.")
             else:
-                raise TypeError("❌ Unexpected type returned from SectionIdentifier.process().")
+                self.llm_client = None
+                self.logger.warning(f"No valid LLM backend configured ('{backend}'). Running heuristic-only.")
+        except Exception as e:
+            self.logger.warning(f"⚠️ Failed to initialize LLM client: {e}. Continuing without LLM.")
+            self.llm_client = None
+
+        # Instantiate agents
+        self.section_identifier = SectionIdentifier(
+            llm_client=self.llm_client,
+            llm_verify=self.config.get("pipeline", {}).get("llm_verify", True),
+        )
+        self.summarizer = SummarizerAgent(
+            llm_client=self.llm_client,
+            max_bullets=self.config.get("pipeline", {}).get("max_bullets", 6),
+        )
+        self.poster_formatter = PosterFormatter(output_dir=self.output_dir)
+
+    def _load_config(self, path: str) -> dict:
+        if not os.path.isfile(path):
+            logging.warning(f"Config file not found at {path}. Using defaults.")
+            return {}
+        try:
+            with open(path, "r", encoding="utf-8") as fh:
+                return yaml.safe_load(fh) or {}
+        except Exception as e:
+            logging.warning(f"Failed to load config {path}: {e}")
+            return {}
+
+    def run_pipeline(
+        self,
+        pdf_path: str,
+        title: Optional[str] = None,
+        authors: Optional[List[str]] = None,
+        write_outputs: bool = True,
+    ) -> Poster:
+        """
+        Main entrypoint.
+        Returns Poster dataclass instance.
+        """
+        self.logger.info(f"🚀 Starting pipeline for PDF: {pdf_path}")
+
+        # 1️⃣ Parse PDF into pages & images
+        pages, images = parse_pdf_to_pages_and_images(
+            pdf_path,
+            output_dir=self.output_dir,
+            ocr_if_empty=self.config.get("pipeline", {}).get("ocr_if_empty", True),
+        )
+        self.logger.info(f"Parsed {len(pages)} pages and {len(images)} images")
+
+        # 2️⃣ Clean text
+        cleaned_pages = clean_pages_text(
+            pages, remove_references=self.config.get("pipeline", {}).get("remove_references", True)
+        )
+        self.logger.info("Cleaned page texts")
+
+        # 3️⃣ Identify sections
+        sections = self.section_identifier.identify_sections_from_pages(cleaned_pages)
+        self.logger.info(f"Identified {len(sections)} sections (heuristic + LLM if available)")
+
+        # 4️⃣ Map images
+        try:
+            sections = self.section_identifier.map_images_to_sections(sections, images)
+        except Exception:
+            sections = associate_images_to_sections(sections, images)
+        self.logger.info("Mapped images to sections")
+
+        # 5️⃣ Summarize sections
+        summarized_sections: List[Section] = []
+        for sec in sections:
+            try:
+                summ = self.summarizer.summarize_section(sec)
+                sec.metadata["bullets"] = summ.get("bullets", [])
+                for img_obj in summ.get("image_refs", []):
+                    for real_img in sec.images:
+                        if real_img.id == img_obj.get("id") and img_obj.get("caption"):
+                            real_img.caption = img_obj["caption"]
+                summarized_sections.append(sec)
+                self.logger.debug(f"Summarized section: {sec.title}")
+            except Exception as e:
+                self.logger.exception(f"Failed to summarize section {sec.title}: {e}")
+                summarized_sections.append(sec)
+
+        # 6️⃣ Format poster
+        poster = self.poster_formatter.format_to_poster(
+            title=title or self._guess_title_from_pages(cleaned_pages),
+            authors=authors or self._guess_authors_from_pages(cleaned_pages),
+            summarized_sections=summarized_sections,
+            layout=self.config.get("pipeline", {}).get("layout", {}),
+        )
+        self.logger.info("Formatted poster dataclass")
+
+        # 7️⃣ Write outputs
+        if write_outputs:
+            try:
+                json_path = self.poster_formatter.poster_to_json(poster, os.path.join(self.output_dir, "poster.json"))
+                md_path = self.poster_formatter.write_markdown_file(
+                    poster, filename=os.path.join(self.output_dir, "poster_preview.md")
+                )
+                self.logger.info(f"Saved JSON → {json_path}")
+                self.logger.info(f"Saved Markdown → {md_path}")
+
+                if self.config.get("pipeline", {}).get("export_pptx", False):
+                    try:
+                        pptx_path = self.poster_formatter.poster_to_pptx(
+                            poster, os.path.join(self.output_dir, "poster.pptx")
+                        )
+                        self.logger.info(f"Saved PPTX → {pptx_path}")
+                    except Exception as e:
+                        self.logger.warning(f"Failed to write PPTX: {e}")
+            except Exception as e:
+                self.logger.exception(f"Failed to write outputs: {e}")
+
+        self.logger.info("✅ Pipeline finished successfully.")
+        return poster
+
+    def _guess_title_from_pages(self, pages: List[Tuple[int, str]]) -> Optional[str]:
+        if not pages:
+            return None
+        first_text = pages[0][1] if pages else ""
+        if not first_text:
+            return None
+        lines = [ln.strip() for ln in first_text.splitlines() if ln.strip()]
+        joined = "\n".join(lines[:10])
+        if "abstract" in joined.lower():
+            title_text = re.split(r"(?i)\babstract\b", joined)[0]
         else:
-            raise ValueError("❌ Unsupported input type. Use 'json' or 'pdf'.")
+            title_text = "\n".join(lines[:3])
+        title = title_text.strip().replace("\n", " ")
+        if len(title) > 200:
+            title = title[:200] + "..."
+        return title or None
 
-        self.logger.info(f"✅ Extracted {len(section_names)} sections: {section_names}")
-
-        # ----------------------------
-        # STEP 2: Summarization
-        # ----------------------------
-        self.logger.info("🔹 Step 2: Summarizing sections...")
-        summarized_sections = []
-
-        for s in sections_list:
-            section_name = s.get("section", "Unknown")
-            section_text = s.get("text", "")
-            if not section_text.strip():
-                self.logger.warning(f"⚠️ Empty text for section '{section_name}', skipping summarization.")
+    def _guess_authors_from_pages(self, pages: List[Tuple[int, str]]) -> Optional[List[str]]:
+        if not pages:
+            return None
+        first_text = pages[0][1] or ""
+        lines = [ln.strip() for ln in first_text.splitlines() if ln.strip()]
+        authors = []
+        for i, ln in enumerate(lines[:12]):
+            if re.search(r"(?i)abstract", ln):
+                break
+            if i == 0 and len(ln.split()) > 10:
                 continue
-            self.logger.info(f"   → Summarizing section: {section_name}")
-            summary_data = self.summarizer.summarize_section(section_name, section_text)
-            summarized_sections.append(summary_data)
-
-        self.logger.info("✅ All sections summarized successfully.")
-
-        # ----------------------------
-        # STEP 3: Poster Formatting
-        # ----------------------------
-        self.logger.info("🔹 Step 3: Formatting final poster output...")
-        poster_output = self.poster_formatter.format_for_poster(summarized_sections)
-
-        # ----------------------------
-        # STEP 4: Save Output
-        # ----------------------------
-        os.makedirs(output_dir, exist_ok=True)
-        output_path = os.path.join(output_dir, "poster_output.json")
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(poster_output, f, indent=4, ensure_ascii=False)
-
-        self.logger.info("🎉 Pipeline completed successfully.")
-        self.logger.info(f"📝 Output saved at: {output_path}")
-
-        return poster_output
+            if ("," in ln or ("and" in ln and len(ln.split()) < 12)) and len(ln.split()) < 20:
+                authors.append(ln)
+        return authors or None

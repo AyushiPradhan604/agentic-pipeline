@@ -1,120 +1,151 @@
+# agents/poster_formatter.py
+"""
+Agent 3 — Poster Formatter
+- Takes summarized sections (with bullets and image refs) and produces:
+  - Poster dataclass (structured JSON)
+  - Markdown preview (images referenced as markdown image links)
+  - Optional simple PPTX export (uses python-pptx if installed)
+"""
 import os
-import yaml
 import json
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
+import logging
+from typing import List, Optional
+from textwrap import dedent
 
+from . import Poster, Section, ImageRef
+
+logger = logging.getLogger(__name__)
+
+try:
+    from pptx import Presentation
+    from pptx.util import Inches, Pt
+    PPTX_AVAILABLE = True
+except Exception:
+    PPTX_AVAILABLE = False
 
 class PosterFormatter:
-    """
-    Agent 3 – Combines all summarized sections and formats them
-    into a structured, poster-ready representation (JSON or Markdown).
-    Uses locally loaded Qwen model for text polishing and structure refinement.
-    """
+    def __init__(self, output_dir: str = "data/outputs"):
+        self.output_dir = output_dir
+        os.makedirs(self.output_dir, exist_ok=True)
 
-    def __init__(self, config_path: str = "configs/config.yaml"):
-        # Load configuration
-        with open(config_path, "r", encoding="utf-8") as f:
-            self.config = yaml.safe_load(f)
+    def format_to_poster(self, title: Optional[str], authors: Optional[List[str]], summarized_sections: List[Section], layout: Optional[dict] = None) -> Poster:
+        poster = Poster(title=title, authors=authors, sections=summarized_sections, layout=layout or {})
+        return poster
 
-        # ✅ Normalize path for Windows
-        self.model_path = os.path.normpath("Qwen1.5-0.5B-Chat").replace("\\", "/")
+    def poster_to_json(self, poster: Poster, out_path: Optional[str] = None) -> str:
+        out_path = out_path or os.path.join(self.output_dir, "poster.json")
+        def section_to_dict(s: Section):
+            return {
+                "title": s.title,
+                "text": s.text,
+                "start_page": s.start_page,
+                "end_page": s.end_page,
+                "images": [vars(img) for img in s.images],
+                "metadata": s.metadata
+            }
+        payload = {
+            "title": poster.title,
+            "authors": poster.authors,
+            "layout": poster.layout,
+            "sections": [section_to_dict(s) for s in poster.sections],
+            "metadata": poster.metadata
+        }
+        with open(out_path, "w", encoding="utf-8") as fh:
+            json.dump(payload, fh, indent=2, ensure_ascii=False)
+        logger.info("Poster JSON written to %s", out_path)
+        return out_path
 
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        print(f"[INFO] Loading local Qwen model from: {self.model_path} ({self.device})")
+    def poster_to_markdown(self, poster: Poster) -> str:
+        md = []
+        md.append(f"# {poster.title or 'Untitled Poster'}\n")
+        if poster.authors:
+            md.append(", ".join(poster.authors) + "\n")
+        for sec in poster.sections:
+            # If the section has bullets in metadata (from summarizer), use them. Otherwise, use text.
+            md.append(f"## {sec.title}\n")
+            bullets = sec.metadata.get("bullets") if sec.metadata.get("bullets") else None
+            if bullets:
+                for b in bullets:
+                    md.append(f"- {b}")
+            else:
+                # fallback short excerpt
+                excerpt = (sec.text[:500] + "...") if sec.text and len(sec.text) > 500 else (sec.text or "")
+                if excerpt:
+                    md.append(excerpt)
+            # images
+            if sec.images:
+                for img in sec.images:
+                    # prefer path if available
+                    img_path = img.path or img.id
+                    caption = img.caption or ""
+                    md.append(f"![{caption}]({img_path})")
+            md.append("\n")
+        markdown = "\n".join(md)
+        return markdown
 
-        # ✅ Load tokenizer and model directly from local directory
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_path, trust_remote_code=True)
-        self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_path,
-            dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-            device_map="auto" if torch.cuda.is_available() else None,
-            trust_remote_code=True
-        )
+    def write_markdown_file(self, poster: Poster, filename: Optional[str] = None) -> str:
+        filename = filename or os.path.join(self.output_dir, "poster_preview.md")
+        md = self.poster_to_markdown(poster)
+        with open(filename, "w", encoding="utf-8") as fh:
+            fh.write(md)
+        logger.info("Markdown preview written to %s", filename)
+        return filename
 
-    def format_for_poster(self, summarized_sections):
-        """Combines summaries into a coherent poster-style output."""
-        if not summarized_sections:
-            raise ValueError("No summarized sections provided to PosterFormatter.")
+    def poster_to_pptx(self, poster: Poster, out_path: Optional[str] = None) -> str:
+        """
+        Create a simple PPTX with one slide per section (title + bullets + images).
+        Requires python-pptx. This is a simple layout; for production-level poster layouts,
+        integrate with a proper layout engine or use templating.
+        """
+        if not PPTX_AVAILABLE:
+            raise RuntimeError("python-pptx is not installed. Install with: pip install python-pptx")
 
-        combined_text = self._build_structured_text(summarized_sections)
-        prompt = self._build_prompt(combined_text)
-        formatted_output = self._query_qwen(prompt)
+        out_path = out_path or os.path.join(self.output_dir, "poster.pptx")
+        prs = Presentation()
+        # use a blank slide layout (index 6 may vary)
+        blank_layout = prs.slide_layouts[6] if len(prs.slide_layouts) > 6 else prs.slide_layouts[5]
 
-        # ✅ Save output in data/outputs
-        output_path = os.path.join("data", "outputs", "final_poster_structure.json")
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump({"poster_content": formatted_output}, f, indent=4, ensure_ascii=False)
+        for sec in poster.sections:
+            slide = prs.slides.add_slide(blank_layout)
+            # Title box
+            left = Inches(0.5)
+            top = Inches(0.2)
+            width = Inches(9)
+            height = Inches(1)
+            title_box = slide.shapes.add_textbox(left, top, width, height)
+            tf = title_box.text_frame
+            p = tf.paragraphs[0]
+            p.text = sec.title
+            p.font.size = Pt(28)
+            # Bullets box
+            left = Inches(0.5)
+            top = Inches(1.2)
+            width = Inches(5.5)
+            height = Inches(4)
+            tb = slide.shapes.add_textbox(left, top, width, height)
+            t = tb.text_frame
+            bullets = sec.metadata.get("bullets") or []
+            for i, b in enumerate(bullets):
+                if i == 0:
+                    t.text = b
+                else:
+                    p = t.add_paragraph()
+                    p.text = b
+                    p.level = 1
 
-        return formatted_output
+            # Add images to the right column (if paths exist)
+            img_left = Inches(6.2)
+            img_top = Inches(1.2)
+            img_w = Inches(3.2)
+            img_h = Inches(3.0)
+            for i, img in enumerate(sec.images):
+                img_path = img.path
+                if img_path and os.path.isfile(img_path):
+                    try:
+                        slide.shapes.add_picture(img_path, img_left, img_top + Inches(i * 3.2), width=img_w, height=img_h)
+                    except Exception as e:
+                        logger.debug("Failed to add image to pptx: %s", e)
 
-    def _build_structured_text(self, summarized_sections):
-        """Combines section summaries in a structured order."""
-        ordered_sections = self.config.get("sections", [])
-        text = ""
-        for sec in ordered_sections:
-            for s in summarized_sections:
-                if s["section"].lower() == sec.lower():
-                    text += f"\n### {sec}\n{s['summary']}\n\n"
-        if not text:
-            text = "\n".join([f"### {s['section']}\n{s['summary']}\n" for s in summarized_sections])
-        return text.strip()
-
-    def _build_prompt(self, combined_text):
-        """Prompt for Qwen to produce structured poster layout."""
-        return f"""
-You are a scientific poster layout assistant.
-Combine and format the following summarized sections
-into a coherent, visually structured poster layout.
-
-Ensure:
-- Each section is clearly titled.
-- Bullets are concise.
-- Image placeholders (like <<Figure_2.png>>) remain exactly where they are.
-- Maintain logical flow: Introduction → Motivation → Dataset → Methodology → Results → Ablation → Conclusion.
-
-Input Sections:
-\"\"\"{combined_text[:4000]}\"\"\"
-
-
-Output format:
-{{
-  "poster_layout": [
-    {{
-      "section": "<Section Name>",
-      "content": [
-        "- Bullet 1",
-        "- Bullet 2"
-      ],
-      "images": ["<<Figure_1.png>>"]
-    }}
-  ]
-}}
-"""
-
-    def _query_qwen(self, prompt: str):
-        """Run local Qwen model for formatting."""
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
-        with torch.no_grad():
-            outputs = self.model.generate(
-                **inputs,
-                max_new_tokens=1024,
-                temperature=0.3,
-                do_sample=False
-            )
-        result = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-        return result
-
-
-# Example standalone usage
-if __name__ == "__main__":
-    example_summaries = [
-        {"section": "Introduction", "summary": "- Goal of research\n- Motivation\n", "images": []},
-        {"section": "Methodology", "summary": "- Used CNN model (<<Figure_1.png>>)\n- Data split 80/20\n", "images": ["<<Figure_1.png>>"]}
-    ]
-
-    formatter = PosterFormatter()
-    formatted_output = formatter.format_for_poster(example_summaries)
-    print("\n[Poster-Ready Layout]")
-    print(formatted_output)
+        prs.save(out_path)
+        logger.info("PPTX poster written to %s", out_path)
+        return out_path

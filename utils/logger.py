@@ -1,27 +1,28 @@
-"""
-utils/logger.py
-----------------
-Provides a centralized logger for the project.
-"""
-
+# utils/logger.py
 import logging
 import os
+from logging.handlers import RotatingFileHandler
+from typing import Optional
 
-def get_logger(name: str):
-    log_dir = "logs"
+def setup_logging(name: str = "agentic_research_pipeline", log_dir: str = "logs", level: int = logging.INFO) -> logging.Logger:
     os.makedirs(log_dir, exist_ok=True)
-    log_path = os.path.join(log_dir, "pipeline.log")
-
     logger = logging.getLogger(name)
-    if not logger.handlers:
-        logger.setLevel(logging.INFO)
-        handler = logging.FileHandler(log_path, encoding="utf-8")
-        formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
-        # Also print to console
-        console_handler = logging.StreamHandler()
-        console_handler.setFormatter(formatter)
-        logger.addHandler(console_handler)
+    logger.setLevel(level)
+
+    # avoid adding handlers multiple times in interactive sessions
+    if logger.handlers:
+        return logger
+
+    fmt = logging.Formatter("%(asctime)s — %(name)s — %(levelname)s — %(message)s")
+
+    ch = logging.StreamHandler()
+    ch.setLevel(level)
+    ch.setFormatter(fmt)
+    logger.addHandler(ch)
+
+    fh = RotatingFileHandler(os.path.join(log_dir, f"{name}.log"), maxBytes=5_000_000, backupCount=3, encoding="utf-8")
+    fh.setLevel(level)
+    fh.setFormatter(fmt)
+    logger.addHandler(fh)
 
     return logger

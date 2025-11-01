@@ -1,10 +1,12 @@
+# pipeline/__init__.py
 """
-pipeline/__init__.py
---------------------
-Initializes the pipeline module that connects and manages all agents.
-"""
+Pipeline package for agentic_research_pipeline.
 
+Exports:
+- PipelineManager: high-level orchestrator
+- Workflow: reusable step definitions
+"""
 from .pipeline_manager import PipelineManager
-from .workflow import PipelineWorkflow
+from .workflow import Workflow
 
-__all__ = ["PipelineManager", "PipelineWorkflow"]
+__all__ = ["PipelineManager", "Workflow"]

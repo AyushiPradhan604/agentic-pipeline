@@ -473,3 +473,145 @@ ValueError: ❌ JSON input must contain a 'sections' list or be a list of sectio
 2025-10-30 01:23:18,341 - pipeline.pipeline_manager - INFO - 📝 Output saved at: data/outputs/poster_output.json
 2025-10-30 01:23:18,376 - main - INFO - ✅ Pipeline completed successfully!
 2025-10-30 01:23:18,377 - main - INFO - 📝 Output saved at: data/outputs\poster_output_2025-10-30_01-23-18.json
+2025-10-31 20:49:31,445 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-10-31 20:49:31,447 - main - INFO - 📄 Input file: data/samples/1.json
+2025-10-31 20:49:31,457 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-10-31 20:50:14,931 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-10-31 20:50:14,978 - main - INFO - 🧠 Detected JSON input file.
+2025-10-31 20:50:14,980 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: data/samples/1.json
+2025-10-31 20:50:14,982 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections...
+2025-10-31 20:50:14,982 - pipeline.pipeline_manager - INFO - 📘 Reading sections directly from JSON input...
+2025-10-31 20:50:15,030 - pipeline.pipeline_manager - INFO - ✅ Extracted 63 sections: ['Abstract', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Introduction', 'Related Works', 'Related Works', 'Related Works', 'Quantifying Image Anonymization', 'Current Anonymization Landscape', 'Problem Statement', 'Problem Statement', 'Pitfalls of Existing Metrics', 'Evaluating Entire Images', 'Human Perception for Anonymization', 'Human Perception for Anonymization', 'PerceptAnon: A Human-Centric Metric', 'Curating a Dataset for Anonymization', 'Curating a Dataset for Anonymization', 'Curating a Dataset for Anonymization', 'Curating a Dataset for Anonymization', 'Curating a Dataset for Anonymization', 'Human Annotations', 'Human Annotations', 'Human Annotations', 'Computing PerceptAnon Metric', 'Computing PerceptAnon Metric', 'Computing PerceptAnon Metric', 'Computing PerceptAnon Metric', 'Computing PerceptAnon Metric', 'Experiments', 'Experiment Setup', 'Experiment Setup', 'Experiment Setup', 'Experiment Setup', 'Experiment Setup', 'Experiment Setup', 'Implementation Details', 'Evaluating Alignment with Human Scores', 'Evaluating Alignment with Human Scores', 'Evaluating Alignment with Human Scores', 'Evaluating Alignment with Human Scores', 'Evaluating Alignment with Human Scores', 'Discussions', 'Discussions', 'Discussions', 'Model', 'Model', 'Model', 'Conclusion', 'Conclusion', 'C. Additional Results', '']
+2025-10-31 20:50:15,036 - pipeline.pipeline_manager - INFO - 🔹 Step 2: Summarizing sections...
+2025-10-31 20:50:15,037 - pipeline.pipeline_manager - INFO -    → Summarizing section: Abstract
+2025-10-31 20:50:26,710 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:32,043 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:34,936 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:36,146 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:37,275 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:38,368 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:39,446 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:40,552 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:42,017 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:43,381 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:45,284 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:47,208 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:48,751 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:49,824 - pipeline.pipeline_manager - INFO -    → Summarizing section: Introduction
+2025-10-31 20:50:50,981 - pipeline.pipeline_manager - INFO -    → Summarizing section: Related Works
+2025-10-31 20:50:53,751 - pipeline.pipeline_manager - INFO -    → Summarizing section: Related Works
+2025-10-31 20:50:55,436 - pipeline.pipeline_manager - INFO -    → Summarizing section: Related Works
+2025-10-31 20:50:56,926 - pipeline.pipeline_manager - INFO -    → Summarizing section: Quantifying Image Anonymization
+2025-10-31 20:50:58,222 - pipeline.pipeline_manager - INFO -    → Summarizing section: Current Anonymization Landscape
+2025-10-31 20:50:59,722 - pipeline.pipeline_manager - INFO -    → Summarizing section: Problem Statement
+2025-10-31 20:51:00,956 - pipeline.pipeline_manager - INFO -    → Summarizing section: Problem Statement
+2025-10-31 20:51:02,347 - pipeline.pipeline_manager - INFO -    → Summarizing section: Pitfalls of Existing Metrics
+2025-10-31 20:51:04,277 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Entire Images
+2025-10-31 20:51:06,116 - pipeline.pipeline_manager - INFO -    → Summarizing section: Human Perception for Anonymization
+2025-10-31 20:51:07,536 - pipeline.pipeline_manager - INFO -    → Summarizing section: Human Perception for Anonymization
+2025-10-31 20:51:08,810 - pipeline.pipeline_manager - INFO -    → Summarizing section: PerceptAnon: A Human-Centric Metric
+2025-10-31 20:51:10,007 - pipeline.pipeline_manager - INFO -    → Summarizing section: Curating a Dataset for Anonymization
+2025-10-31 20:51:11,782 - pipeline.pipeline_manager - INFO -    → Summarizing section: Curating a Dataset for Anonymization
+2025-10-31 20:51:14,058 - pipeline.pipeline_manager - INFO -    → Summarizing section: Curating a Dataset for Anonymization
+2025-10-31 20:51:15,839 - pipeline.pipeline_manager - INFO -    → Summarizing section: Curating a Dataset for Anonymization
+2025-10-31 20:51:16,916 - pipeline.pipeline_manager - INFO -    → Summarizing section: Curating a Dataset for Anonymization
+2025-10-31 20:51:18,471 - pipeline.pipeline_manager - INFO -    → Summarizing section: Human Annotations
+2025-10-31 20:51:19,943 - pipeline.pipeline_manager - INFO -    → Summarizing section: Human Annotations
+2025-10-31 20:51:21,822 - pipeline.pipeline_manager - INFO -    → Summarizing section: Human Annotations
+2025-10-31 20:51:23,560 - pipeline.pipeline_manager - INFO -    → Summarizing section: Computing PerceptAnon Metric
+2025-10-31 20:51:25,112 - pipeline.pipeline_manager - INFO -    → Summarizing section: Computing PerceptAnon Metric
+2025-10-31 20:51:26,229 - pipeline.pipeline_manager - INFO -    → Summarizing section: Computing PerceptAnon Metric
+2025-10-31 20:51:27,763 - pipeline.pipeline_manager - INFO -    → Summarizing section: Computing PerceptAnon Metric
+2025-10-31 20:51:29,264 - pipeline.pipeline_manager - INFO -    → Summarizing section: Computing PerceptAnon Metric
+2025-10-31 20:51:30,652 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiments
+2025-10-31 20:51:31,868 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-31 20:51:33,027 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-31 20:51:34,641 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-31 20:51:36,123 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-31 20:51:37,591 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-31 20:51:39,334 - pipeline.pipeline_manager - INFO -    → Summarizing section: Experiment Setup
+2025-10-31 20:51:40,926 - pipeline.pipeline_manager - INFO -    → Summarizing section: Implementation Details
+2025-10-31 20:51:42,407 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Alignment with Human Scores
+2025-10-31 20:51:44,012 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Alignment with Human Scores
+2025-10-31 20:51:45,492 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Alignment with Human Scores
+2025-10-31 20:51:47,031 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Alignment with Human Scores
+2025-10-31 20:51:48,429 - pipeline.pipeline_manager - INFO -    → Summarizing section: Evaluating Alignment with Human Scores
+2025-10-31 20:51:49,584 - pipeline.pipeline_manager - INFO -    → Summarizing section: Discussions
+2025-10-31 20:51:50,800 - pipeline.pipeline_manager - INFO -    → Summarizing section: Discussions
+2025-10-31 20:51:52,219 - pipeline.pipeline_manager - INFO -    → Summarizing section: Discussions
+2025-10-31 20:51:54,235 - pipeline.pipeline_manager - INFO -    → Summarizing section: Model
+2025-10-31 20:51:55,956 - pipeline.pipeline_manager - INFO -    → Summarizing section: Model
+2025-10-31 20:51:57,697 - pipeline.pipeline_manager - INFO -    → Summarizing section: Model
+2025-10-31 20:51:59,221 - pipeline.pipeline_manager - INFO -    → Summarizing section: Conclusion
+2025-10-31 20:52:01,213 - pipeline.pipeline_manager - INFO -    → Summarizing section: Conclusion
+2025-10-31 20:52:02,492 - pipeline.pipeline_manager - INFO -    → Summarizing section: C. Additional Results
+2025-10-31 20:52:05,052 - pipeline.pipeline_manager - INFO -    → Summarizing section: 
+2025-10-31 20:52:06,190 - pipeline.pipeline_manager - INFO - ✅ All sections summarized successfully.
+2025-10-31 20:52:06,192 - pipeline.pipeline_manager - INFO - 🔹 Step 3: Formatting final poster output...
+2025-10-31 20:52:20,531 - pipeline.pipeline_manager - INFO - 🎉 Pipeline completed successfully.
+2025-10-31 20:52:20,536 - pipeline.pipeline_manager - INFO - 📝 Output saved at: data/outputs/poster_output.json
+2025-10-31 20:52:20,578 - main - INFO - ✅ Pipeline completed successfully!
+2025-10-31 20:52:20,579 - main - INFO - 📝 Output saved at: data/outputs\poster_output_2025-10-31_20-52-20.json
+2025-11-01 00:47:00,505 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-11-01 00:47:00,506 - main - INFO - 📄 Input file: data/samples/2.pdf
+2025-11-01 00:47:00,517 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-11-01 00:48:39,532 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-11-01 00:48:39,533 - main - INFO - 📄 Input file: data/samples/2.pdf
+2025-11-01 00:48:39,545 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-11-01 00:49:13,421 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-11-01 00:49:13,442 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: data/samples/2.pdf
+2025-11-01 00:49:13,442 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections and mapping images...
+2025-11-01 00:49:13,449 - main - ERROR - ❌ Pipeline execution failed: 'PDFParser' object has no attribute 'parse_pdf'
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 58, in main
+    final_output = pipeline.run_pipeline(args.input, input_type="pdf")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 50, in run_pipeline
+    sections_list = self.section_identifier.process(input_path)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\section_identifier.py", line 56, in process
+    parsed = self.pdf_parser.parse_pdf(pdf_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'PDFParser' object has no attribute 'parse_pdf'
+2025-11-01 00:50:35,175 - main - INFO - 🚀 Starting Agentic Research Pipeline...
+2025-11-01 00:50:35,176 - main - INFO - 📄 Input file: data/samples/2.pdf
+2025-11-01 00:50:35,185 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-11-01 00:51:07,763 - pipeline.pipeline_manager - INFO - ✅ All agents initialized successfully.
+2025-11-01 00:51:07,783 - pipeline.pipeline_manager - INFO - 🚀 Running pipeline for file: data/samples/2.pdf
+2025-11-01 00:51:07,785 - pipeline.pipeline_manager - INFO - 🔹 Step 1: Identifying sections and mapping images...
+2025-11-01 00:51:07,788 - utils.pdf_parser - INFO - 📄 Extracting text from PDF: data/samples/2.pdf
+2025-11-01 00:51:08,248 - utils.pdf_parser - INFO - ✅ PDF text extracted. Total pages: 21
+2025-11-01 00:51:08,263 - main - ERROR - ❌ Pipeline execution failed: 'ImageHandler' object has no attribute 'map_images_to_sections_by_proximity'
+Traceback (most recent call last):
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\main.py", line 58, in main
+    final_output = pipeline.run_pipeline(args.input, input_type="pdf")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\pipeline\pipeline_manager.py", line 50, in run_pipeline
+    sections_list = self.section_identifier.process(input_path)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Ayushi Pradhan\Desktop\study\my btp\agentic_research_pipeline\agents\section_identifier.py", line 64, in process
+    section_images_map = self.image_handler.map_images_to_sections_by_proximity(text, list(section_candidates.keys()), list(image_map.keys()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ImageHandler' object has no attribute 'map_images_to_sections_by_proximity'
+2025-11-01 01:23:45,463 - main - INFO - Starting pipeline
+2025-11-01 01:23:45,474 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-11-01 01:24:23,078 - pipeline.pipeline_manager - INFO - All agents initialized.
+2025-11-01 01:24:23,129 - pipeline.pipeline_manager - INFO - Running pipeline for data/samples/2.pdf (type=pdf)
+2025-11-01 01:28:41,493 - pipeline.pipeline_manager - INFO - Pipeline finished. Outputs: data/outputs\final_poster.json
+2025-11-01 01:28:41,529 - main - INFO - Pipeline finished.
+2025-11-01 01:36:49,595 - main - INFO - Starting pipeline
+2025-11-01 01:36:49,605 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-11-01 01:37:22,915 - pipeline.pipeline_manager - INFO - All agents initialized.
+2025-11-01 01:37:22,948 - pipeline.pipeline_manager - INFO - Running pipeline for data/samples/2.pdf (type=pdf)
+2025-11-01 01:43:51,817 - pipeline.pipeline_manager - INFO - Pipeline finished. Outputs: data/outputs\final_poster.json
+2025-11-01 01:43:51,852 - main - INFO - Pipeline finished.
+2025-11-01 01:48:23,144 - main - INFO - Starting pipeline
+2025-11-01 01:48:23,156 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-11-01 01:48:59,277 - pipeline.pipeline_manager - INFO - All agents initialized.
+2025-11-01 01:48:59,332 - pipeline.pipeline_manager - INFO - Running pipeline for data/samples/2.pdf (type=pdf)
+2025-11-01 08:57:14,872 - main - INFO - Starting pipeline
+2025-11-01 08:57:14,889 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-11-01 08:57:14,900 - pipeline.pipeline_manager - INFO - Loading shared Qwen model from: Qwen1.5-0.5B-Chat
+2025-11-01 08:59:16,185 - main - INFO - Starting pipeline
+2025-11-01 08:59:16,195 - pipeline.pipeline_manager - INFO - Initializing PipelineManager...
+2025-11-01 08:59:16,202 - pipeline.pipeline_manager - INFO - Loading shared Qwen model from: Qwen1.5-0.5B-Chat

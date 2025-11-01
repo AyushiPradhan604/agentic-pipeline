@@ -1,104 +1,114 @@
-import os
-import torch
+# agents/summarizer_agent.py
+"""
+Agent 2 — Summarizer Agent
+- For each Section, produce image-aware bullet point summaries.
+- Preferred path: call local LLM (Qwen) using utils.llm_client.LLMClient and request strict JSON:
+  {
+    "section_title": "...",
+    "bullets": ["...", "..."],
+    "image_refs": [{"id":"img_1","caption":"..."}]
+  }
+- Fallback: heuristic summarizer (first sentences + sentences containing numbers/keywords).
+"""
+from typing import List, Dict, Any, Optional
+import logging
 import re
-import yaml
-from transformers import AutoTokenizer, AutoModelForCausalLM
+import json
 
+from . import Section, ImageRef
 
-class SummarizerAgent:
-    """
-    Agent 2 – Summarizes each section into bullet points,
-    keeping all image placeholders (like <<Figure_2.png>>) intact.
-    Uses locally loaded Qwen model for summarization.
-    """
+logger = logging.getLogger(__name__)
 
-    def __init__(self, config_path: str = "configs/config.yaml"):
-        # Load config
-        with open(config_path, "r", encoding="utf-8") as f:
-            self.config = yaml.safe_load(f)
+try:
+    from utils.llm_client import LLMClient
+except Exception:
+    LLMClient = None
 
-        # ✅ Load local Qwen model path
-        self.model_path = "Qwen1.5-0.5B-Chat".replace("\\", "/")
-
-        # ✅ Device setup
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-
-        print(f"[INFO] Loading local Qwen model from: {self.model_path} ({self.device})")
-
-        # ✅ Load model + tokenizer locally
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_path, trust_remote_code=True)
-        self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_path,
-            dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-            device_map="auto" if torch.cuda.is_available() else None,
-            trust_remote_code=True
-        )
-
-    # -------------------------------------------------------------------------
-    def summarize_section(self, section_name: str, section_text: str):
-        """Summarizes a given section into bullet points while preserving image tags."""
-        image_refs = re.findall(r"<<[^<>]+>>", section_text)
-        prompt = self._build_prompt(section_name, section_text, image_refs)
-
-        summary = self._query_qwen(prompt)
-
-        # ✅ Ensure summary is never None
-        if not summary or not isinstance(summary, str):
-            summary = "(No summary generated — possibly empty input or model timeout.)"
-
-        return {
-            "section": section_name.strip() if section_name else "Unknown",
-            "summary": summary.strip(),
-            "images": image_refs
-        }
-
-    # -------------------------------------------------------------------------
-    def _build_prompt(self, section_name: str, section_text: str, image_refs):
-        """Creates an instruction for the model."""
-        image_hint = "\n".join(image_refs) if image_refs else "None"
-
-        return f"""
-You are an expert summarizer for academic research papers.
-
-Summarize the following section: **{section_name}**
-into concise bullet points (3–7 bullets max).
-Keep every image placeholder (like <<Figure_1.png>>) exactly as it appears.
-Do NOT remove or modify them.
-
-Section Text:
-\"\"\"{section_text[:2500]}\"\"\"  # limit text length for efficiency
-
-Detected image placeholders:
-{image_hint}
-
-Output format:
-- Bullet 1
-- Bullet 2
-- ...
-(Keep image placeholders intact)
+BULLET_PROMPT_TEMPLATE = """
+You are an expert summarization assistant for academic papers.
+Input: a section title and the section text (will be provided).
+Produce a JSON object with the following schema:
+{{
+  "section_title": "<cleaned section title>",
+  "bullets": ["short bullet 1", "short bullet 2", ...],   // 3-8 concise bullets, each <= 30 words
+  "image_refs": [{{"id":"img_1","caption":"short caption or extracted caption"}}, ...]
+}}
+Notes:
+- Focus on key contributions, methods, numeric results, novelty, and any claims.
+- Bullets should be concise, factual, and self-contained.
+- If the section contains essential numeric results, include them.
+- Return ONLY valid JSON.
 """
 
-    # -------------------------------------------------------------------------
-    def _query_qwen(self, prompt: str):
-        """Runs local inference using Qwen model."""
+class SummarizerAgent:
+    def __init__(self, llm_client: Optional["LLMClient"] = None, max_bullets: int = 6):
+        self.llm_client = llm_client
+        self.max_bullets = max_bullets
+        self.use_llm = bool(llm_client is not None)
+
+    def summarize_section(self, section: Section) -> Dict[str, Any]:
+        """
+        Summarize a single Section into bullets, preserving image references.
+        Returns a dict with keys: section_title, bullets (list), image_refs (list)
+        """
+        image_refs = [{"id": img.id, "caption": (img.caption or "")} for img in section.images]
+
+        if self.use_llm:
+            prompt = BULLET_PROMPT_TEMPLATE + "\n\nSection title:\n" + section.title + "\n\nSection text:\n" + (section.text[:4000] + "..." if len(section.text) > 4000 else section.text)
+            try:
+                resp = self.llm_client.generate(prompt, max_tokens=512)
+                # parse JSON only
+                parsed = self._parse_json_from_text(resp)
+                if parsed:
+                    # ensure image_refs are included
+                    parsed.setdefault("image_refs", image_refs)
+                    parsed.setdefault("section_title", section.title)
+                    # limit bullets
+                    parsed["bullets"] = parsed.get("bullets", [])[: self.max_bullets]
+                    return parsed
+            except Exception as e:
+                logger.warning("LLM summarization failed: %s", e)
+
+        # Fallback heuristic summarization
+        bullets = self._heuristic_bullets(section.text, max_bullets=self.max_bullets)
+        return {"section_title": section.title, "bullets": bullets, "image_refs": image_refs}
+
+    def _heuristic_bullets(self, text: str, max_bullets: int = 6) -> List[str]:
+        # split into sentences; pick first sentence, sentences with numbers, and sentences with keywords
+        sents = re.split(r"(?<=[\.\?\!])\s+", (text or "").strip())
+        picks = []
+        if sents:
+            picks.append(self._clean_sentence(sents[0]))
+        keywords = ["we propose", "we present", "results", "achieve", "improve", "accuracy", "dataset", "experiment", "show"]
+        for s in sents[1:]:
+            ls = s.lower()
+            if any(k in ls for k in keywords):
+                picks.append(self._clean_sentence(s))
+            elif re.search(r"\d", s) and len(picks) < max_bullets:
+                picks.append(self._clean_sentence(s))
+            if len(picks) >= max_bullets:
+                break
+        # pad if too few
+        for s in sents[1:]:
+            if len(picks) >= max_bullets:
+                break
+            sentence = self._clean_sentence(s)
+            if sentence not in picks and len(sentence) > 20:
+                picks.append(sentence)
+        # final trimming
+        return [p[:300] for p in picks[:max_bullets]]
+
+    def _clean_sentence(self, s: str) -> str:
+        return re.sub(r"\s+", " ", s.strip())
+
+    def _parse_json_from_text(self, text: str) -> Optional[Dict[str, Any]]:
+        # find first { or [ and try to json.loads
         try:
-            inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
-            with torch.no_grad():
-                outputs = self.model.generate(
-                    **inputs,
-                    max_new_tokens=512,
-                    temperature=0.4,
-                    do_sample=False
-                )
-            result = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-            # ✅ Clean common artifacts
-            result = re.sub(r"<\|im_end\|>.*", "", result)
-            result = result.strip()
-
-            # ✅ Return clean text or None if empty
-            return result if result else None
-
+            start = text.find("{")
+            if start == -1:
+                start = text.find("[")
+            candidate = text[start:]
+            return json.loads(candidate)
         except Exception as e:
-            print(f"[ERROR] Qwen generation failed: {e}")
+            logger.debug("Failed to parse JSON from LLM output: %s", e)
             return None

@@ -1,42 +1,54 @@
-"""
-agents/__init__.py
-------------------
-Initializes and exposes the three main agents for the Agentic Research Pipeline.
-Now configured to load Qwen models from the local path.
-"""
+# agents/__init__.py
+from dataclasses import dataclass, field
+from typing import List, Optional, Dict, Any
 
-import os
-from .section_identifier import SectionIdentifier
-from .summarizer_agent import SummarizerAgent
-from .poster_formatter import PosterFormatter
+__all__ = ["Section", "ImageRef", "Poster"]
 
-__all__ = [
-    "SectionIdentifier",
-    "SummarizerAgent",
-    "PosterFormatter",
-    "load_all_agents",
-]
-
-
-def load_all_agents(config=None):
+@dataclass
+class ImageRef:
     """
-    Initializes all agents with the given configuration (if any).
-    Each agent loads the Qwen model from the local directory:
-        agentic_research_pipeline/Qwen1.5-0.5B-Chat/
-
-    Args:
-        config (dict, optional): Configuration dictionary (optional since paths are fixed).
-
-    Returns:
-        tuple: (section_identifier, summarizer, poster_formatter)
+    Represents an extracted image from the paper.
+    - id: unique id (e.g., img_1.png)
+    - page: source page number (1-indexed)
+    - bbox: optional bounding box (x0, y0, x1, y1) in PDF units if available
+    - caption: caption text if available
+    - path: path to saved image file
     """
-    base_path = os.path.join(os.path.dirname(__file__), "..")
-    local_model_path = os.path.join(base_path, "Qwen1.5-0.5B-Chat")
+    id: str
+    page: int
+    bbox: Optional[List[float]] = None
+    caption: Optional[str] = None
+    path: Optional[str] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
-    print(f"[INFO] Initializing all agents using local Qwen model at: {local_model_path}")
+@dataclass
+class Section:
+    """
+    Represents a logical section extracted from paper text.
+    - title: section title (e.g., "Introduction")
+    - start_page: page where section starts (optional)
+    - end_page: page where section ends (optional)
+    - text: full section text
+    - images: list of ImageRef instances mapped to this section
+    - metadata: any additional signals (confidence, heuristics used)
+    """
+    title: str
+    text: str
+    start_page: Optional[int] = None
+    end_page: Optional[int] = None
+    images: List[ImageRef] = field(default_factory=list)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
-    section_identifier = SectionIdentifier(config_path="configs/config.yaml")
-    summarizer = SummarizerAgent(config_path="configs/config.yaml")
-    poster_formatter = PosterFormatter(config_path="configs/config.yaml")
-
-    return section_identifier, summarizer, poster_formatter
+@dataclass
+class Poster:
+    """
+    Structured poster ready output.
+    - title, authors: top-level metadata
+    - sections: list of Section objects with summarized bullet points in metadata (or separate field)
+    - layout: hints for layout engine
+    """
+    title: Optional[str] = None
+    authors: Optional[List[str]] = None
+    sections: List[Section] = field(default_factory=list)
+    layout: Dict[str, Any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)

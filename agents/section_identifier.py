@@ -1,162 +1,213 @@
-import os
+# agents/section_identifier.py
+"""
+Agent 1 — Section Identifier
+- Attempts to split extracted paper text (or page-wise text) into logical sections.
+- Hybrid approach:
+  1) quick rule-based heading detection (common section headings, all-caps headings, numbered headings)
+  2) optional LLM verification/refinement via utils.llm_client.LLMClient (if present)
+- Also supports mapping ImageRef objects (from utils/pdf_parser) to nearest section by page number or bbox.
+"""
+from typing import List, Optional, Tuple
 import re
-import yaml
+import logging
 import json
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
+
+from . import Section, ImageRef
+
+logger = logging.getLogger(__name__)
+COMMON_HEADINGS = [
+    "abstract", "introduction", "background", "related work", "literature review",
+    "method", "methods", "methodology", "materials and methods", "experiments",
+    "results", "discussion", "conclusion", "conclusions", "future work", "acknowledgements",
+    "references", "appendix", "supplementary"
+]
+
+# try to import an LLM client wrapper; fallback to None
+try:
+    from utils.llm_client import LLMClient
+except Exception:
+    LLMClient = None
 
 
 class SectionIdentifier:
-    """
-    Agent 1 – Identifies and extracts standard sections from a research paper.
-    Uses a locally loaded Qwen model for semantic section detection.
-    Now supports JSON input instead of PDF.
-    """
-
-    def __init__(self, config_path: str = "configs/config.yaml"):
-        # ----------------------------
-        # Load configuration
-        # ----------------------------
-        with open(config_path, "r", encoding="utf-8") as f:
-            self.config = yaml.safe_load(f)
-
-        # ✅ Normalize model path and choose device
-        self.model_path = "Qwen1.5-0.5B-Chat".replace("\\", "/")
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-
-        print(f"[INFO] Loading local Qwen model from: {self.model_path} ({self.device})")
-
-        # ✅ Load tokenizer & model
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_path, trust_remote_code=True)
-        self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_path,
-            dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-            device_map="auto" if torch.cuda.is_available() else None,
-            trust_remote_code=True,
-        )
-
-        # ✅ Load section names
-        self.target_sections = self.config.get("sections", [])
-        if not self.target_sections:
-            print("[WARN] 'sections' not found in config. Using default set.")
-            self.target_sections = [
-                "Abstract", "Introduction", "Motivation", "Related Work",
-                "Dataset", "Methodology", "Results", "Ablation", "Conclusion"
-            ]
-
-    # -------------------------------------------------------------------------
-    def process(self, json_path: str):
+    def __init__(self, llm_client: Optional["LLMClient"] = None, llm_verify: bool = True):
         """
-        Extracts text from a JSON file (instead of a PDF),
-        identifies major sections, and returns them.
-        Called directly by PipelineManager.
+        llm_client: an instance of utils.llm_client.LLMClient (optional)
+        llm_verify: whether to use LLM for refining sections (if llm_client provided)
         """
-        print(f"[INFO] Reading research paper from JSON: {json_path}")
+        self.llm_client = llm_client
+        self.llm_verify = bool(llm_verify and llm_client is not None)
 
-        if not os.path.exists(json_path):
-            raise FileNotFoundError(f"❌ JSON file not found at: {json_path}")
+    def identify_sections_from_pages(self, pages: List[Tuple[int, str]]) -> List[Section]:
+        """
+        pages: list of (page_number, text) where text is OCR'd or extracted text for that page.
+        Returns a list of Section objects with approximate start/end pages and section text.
+        """
+        # build a single long text with page markers
+        page_texts = {p: t for p, t in pages}
+        merged = []
+        for page_num, text in pages:
+            marker = f"\n\n[[PAGE {page_num}]]\n"
+            merged.append(marker + (text or ""))
+        long_text = "\n".join(merged)
 
-        # Load JSON content
-        with open(json_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        # Expect structure like:
-        # {"sections": [{"section": "Introduction", "text": "..."}, ...]}
-        if isinstance(data, dict) and "sections" in data:
-            sections_data = data["sections"]
-        elif isinstance(data, list):
-            sections_data = data
-        else:
-            raise ValueError("❌ JSON must contain a list of sections or a 'sections' key.")
-
-        print(f"[INFO] Loaded {len(sections_data)} sections from JSON.")
-        sections_output = []
-
-        # Process each section text
-        for sec in sections_data:
-            section_name = sec.get("section", "Unknown")
-            section_text = sec.get("text", "")
-            if not section_text.strip():
-                print(f"[WARN] Empty text for section '{section_name}', skipping.")
+        # Rule-based heading detection: look for lines that look like headings
+        headings = []
+        # candidate pattern: line is short, contains letter, may be all caps or starts with capitalized word
+        for m in re.finditer(r"(^[A-Za-z][^\n]{0,120}$)", long_text, flags=re.MULTILINE):
+            line = m.group(1).strip()
+            # ignore if line is part of a paragraph (heuristic: more than 8 words -> skip)
+            if len(line.split()) > 8:
                 continue
+            # normalize
+            norm = re.sub(r"[^A-Za-z ]", " ", line).strip().lower()
+            if norm in COMMON_HEADINGS or line.isupper() or re.match(r"^\d+(\.\d+)*\s+[A-Za-z]", line):
+                headings.append({"title": line.strip(), "span": m.span()})
 
-            prompt = self._build_prompt(section_name, section_text)
-            result = self._query_qwen(prompt)
-            if result:
-                sections_output.append(result)
+        # if no headings detected, try splitting by common headings presence
+        if not headings:
+            # search within text for common headings words
+            for hd in COMMON_HEADINGS:
+                for m in re.finditer(rf"(^|\n)\s*{re.escape(hd)}\s*(\n|:)", long_text, flags=re.IGNORECASE):
+                    headings.append({"title": hd.capitalize(), "span": m.span()})
 
-        print(f"[INFO] Successfully identified {len(sections_output)} cleaned sections.")
-        return sections_output
+        # If still no headings, fallback to chunking by pages (each page a section)
+        sections = []
+        if not headings:
+            logger.info("No headings found heuristically — falling back to page-wise sections")
+            for page_num, text in pages:
+                sections.append(Section(title=f"Page {page_num}", text=text or "", start_page=page_num, end_page=page_num))
+            return sections
 
-    # -------------------------------------------------------------------------
-    def _build_prompt(self, section_name: str, section_text: str):
-        """
-        Builds a focused instruction prompt for Qwen.
-        """
-        return f"""
-You are a research paper structure analyzer.
-From the following text, identify whether it belongs to one of these sections:
-{', '.join(self.target_sections)}.
+        # Sort headings by position and extract text between headings
+        headings = sorted(headings, key=lambda x: x["span"][0])
+        positions = [h["span"][0] for h in headings] + [len(long_text) + 1]
+        for idx, h in enumerate(headings):
+            start = h["span"][1]  # after the match
+            end = positions[idx + 1]
+            section_text = long_text[start:end].strip()
+            # attempt to detect start_page and end_page from page markers in the chunk
+            sp = self._find_page_from_text(section_text)
+            ep = self._find_page_from_text(long_text[start:end])
+            sections.append(Section(title=h["title"].strip(), text=section_text, start_page=sp, end_page=ep))
 
-If it does, clean the section content (remove noise like references, equations, or extra symbols),
-and return only the refined text for that section.
-
-Section Candidate: {section_name}
-Text:
-\"\"\"{section_text[:2000]}\"\"\"
-
-Output format (JSON):
-{{"section": "<best_matching_section_name>", "content": "<cleaned_text>"}}
-"""
-
-    # -------------------------------------------------------------------------
-    def _query_qwen(self, prompt: str):
-        """
-        Runs inference with local Qwen model and parses its JSON output safely.
-        """
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
-        with torch.no_grad():
-            outputs = self.model.generate(
-                **inputs,
-                max_new_tokens=512,
-                temperature=0.3,
-                do_sample=False
-            )
-
-        result = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-        # ✅ Extract JSON-like output safely
-        match = re.search(r"\{.*\}", result, re.S)
-        if match:
+        # Optional LLM refinement
+        if self.llm_verify:
             try:
-                parsed = json.loads(match.group(0))
-                if isinstance(parsed, dict) and "section" in parsed and "content" in parsed:
-                    return parsed
-            except json.JSONDecodeError:
-                pass
+                sections = self._refine_with_llm(sections)
+            except Exception as e:
+                logger.warning("LLM refine failed, using heuristic sections: %s", e)
 
-        # fallback
-        return {"section": "Unknown", "content": result.strip()}
+        return sections
 
+    def _find_page_from_text(self, text: str) -> Optional[int]:
+        m = re.search(r"\[\[PAGE (\d+)\]\]", text)
+        if m:
+            return int(m.group(1))
+        return None
 
-# ✅ Example standalone usage
-if __name__ == "__main__":
-    # Example JSON file structure
-    example_json = {
-        "sections": [
-            {"section": "Introduction", "text": "This paper introduces a novel algorithm for EV navigation."},
-            {"section": "Methodology", "text": "The method leverages a CNN architecture with reinforcement learning."}
+    def _refine_with_llm(self, sections: List[Section]) -> List[Section]:
+        """
+        Ask the LLM to verify/merge/split sections and return cleaned list.
+        The LLM is prompted to return a JSON array with fields: title, start_page, end_page, text.
+        """
+        if not self.llm_client:
+            return sections
+
+        prompt = self._build_llm_refine_prompt(sections)
+        resp = self.llm_client.generate(prompt, max_tokens=1024)
+        # Expect the LLM to return strict JSON; try to parse gracefully
+        try:
+            content = resp.strip()
+            # Some LLMs prepend text — find first '{' or '['
+            start_idx = min((content.find('[') if content.find('[') != -1 else len(content)),
+                            (content.find('{') if content.find('{') != -1 else len(content)))
+            json_text = content[start_idx:]
+            parsed = json.loads(json_text)
+            refined = []
+            for obj in parsed:
+                refined.append(Section(
+                    title=obj.get("title") or "Untitled",
+                    text=obj.get("text") or "",
+                    start_page=obj.get("start_page"),
+                    end_page=obj.get("end_page"),
+                    images=[]
+                ))
+            return refined
+        except Exception as e:
+            logger.warning("Failed to parse LLM refine output: %s", e)
+            return sections
+
+    def _build_llm_refine_prompt(self, sections: List[Section]) -> str:
+        """
+        Build prompt asking the LLM to clean up heuristically detected sections.
+        Output MUST be valid JSON array:
+        [
+          {"title": "...", "start_page": 1, "end_page": 2, "text": "..."}, ...
         ]
-    }
+        """
+        small_samples = []
+        for s in sections:
+            small_samples.append({
+                "title": s.title,
+                "start_page": s.start_page,
+                "end_page": s.end_page,
+                "text_snippet": (s.text[:800] + "...") if s.text else ""
+            })
+        prompt = (
+            "You are a helper that cleans up section segmentation of an academic paper.\n"
+            "Input is a list of candidate sections (title, start_page, end_page, text_snippet).\n"
+            "Please return a JSON array of sections with keys: title, start_page, end_page, text.\n"
+            "Merge or split if needed; drop non-informative sections like 'References'.\n"
+            f"Candidates:\n{json.dumps(small_samples, indent=2)}\n\n"
+            "Important: return ONLY valid JSON (an array). Keep text reasonably short (under 3000 chars each).\n"
+        )
+        return prompt
 
-    # Save temp file for testing
-    test_path = "sample_paper.json"
-    with open(test_path, "w", encoding="utf-8") as f:
-        json.dump(example_json, f, indent=4)
+    def map_images_to_sections(self, sections: List[Section], images: List[ImageRef]) -> List[Section]:
+        """
+        Map images to sections by page number first; if bbox/page missing, best-effort by nearest start_page.
+        """
+        if not images:
+            return sections
 
-    agent = SectionIdentifier()
-    sections = agent.process(test_path)
+        # Index sections by page ranges
+        for img in images:
+            placed = False
+            for sec in sections:
+                if sec.start_page and sec.end_page and img.page:
+                    if sec.start_page <= img.page <= (sec.end_page or sec.start_page):
+                        sec.images.append(img)
+                        placed = True
+                        break
+                elif sec.start_page and img.page:
+                    if sec.start_page == img.page:
+                        sec.images.append(img)
+                        placed = True
+                        break
+            if not placed:
+                # place in closest section by page distance
+                if img.page:
+                    best = None
+                    best_dist = 9999
+                    for sec in sections:
+                        sp = sec.start_page or 9999
+                        dist = abs(sp - img.page)
+                        if dist < best_dist:
+                            best_dist = dist
+                            best = sec
+                    if best:
+                        best.images.append(img)
+                else:
+                    # if no page info, append to the section with largest text length (likely Results/Methods)
+                    biggest = max(sections, key=lambda s: len(s.text or ""))
+                    biggest.images.append(img)
+        return sections
 
-    print("\n[Extracted Sections]")
-    for sec in sections:
-        print(f"--- {sec['section'].upper()} ---\n{sec['content'][:300]}...\n")
+
+# simple usage example (not executed here):
+# from utils.pdf_parser import parse_pdf_to_pages_and_images
+# pages, images = parse_pdf_to_pages_and_images("paper.pdf")
+# sid = SectionIdentifier(llm_client=my_llm)
+# sections = sid.identify_sections_from_pages(pages)
+# sections = sid.map_images_to_sections(sections, images)

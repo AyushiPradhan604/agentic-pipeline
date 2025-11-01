@@ -1,104 +1,63 @@
+# main.py
+"""
+Entry point for agentic_research_pipeline.
+
+Usage:
+    python main.py --pdf path/to/paper.pdf --title "Optional Title" --authors "A. Author;B. Author" --config configs/config.yaml
+"""
+
 import argparse
-import yaml
+import logging
 import os
-import sys
-import json
-from datetime import datetime
+import yaml
+from utils.logger import setup_logging
 
-# Local imports
-from pipeline.pipeline_manager import PipelineManager
-from utils.logger import get_logger
+# Pipeline manager import
+try:
+    from pipeline.pipeline_manager import PipelineManager
+except Exception as e:
+    raise RuntimeError("Failed to import pipeline manager. Ensure your PYTHONPATH includes the repo root. Error: %s" % e)
 
-
-# ---------------------------
-# Helper: Load YAML config
-# ---------------------------
-def load_config(config_path: str) -> dict:
-    if not os.path.exists(config_path):
-        raise FileNotFoundError(f"❌ Config file not found at: {config_path}")
-    with open(config_path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+logger = setup_logging("main", log_dir="logs", level=logging.INFO)
 
 
-# ---------------------------
-# Helper: Validate JSON input
-# ---------------------------
-def validate_json_input(json_path: str) -> dict:
-    """Ensures the JSON file exists and is well-formed."""
-    if not os.path.exists(json_path):
-        raise FileNotFoundError(f"❌ JSON file not found at: {json_path}")
-
-    with open(json_path, "r", encoding="utf-8") as f:
-        try:
-            data = json.load(f)
-        except json.JSONDecodeError as e:
-            raise ValueError(f"❌ Invalid JSON file format: {e}")
-
-    if not isinstance(data, dict):
-        raise ValueError("❌ JSON root must be an object (dictionary).")
-
-    return data
+def load_config(path: str) -> dict:
+    if not os.path.isfile(path):
+        logger.warning("Config file not found at %s, proceeding with defaults.", path)
+        return {}
+    with open(path, "r", encoding="utf-8") as fh:
+        return yaml.safe_load(fh) or {}
 
 
-# ---------------------------
-# Main Execution
-# ---------------------------
+def parse_args():
+    p = argparse.ArgumentParser(description="Run the agentic_research_pipeline on a research PDF.")
+    p.add_argument("--pdf", required=True, help="Path to the input PDF")
+    p.add_argument("--title", default=None, help="Optional poster title")
+    p.add_argument("--authors", default=None, help="Optional authors (semicolon-separated)")
+    p.add_argument("--config", default="configs/config.yaml", help="Path to config.yaml")
+    p.add_argument("--no-write", dest="write", action="store_false", help="If set, do not write outputs to disk")
+    return p.parse_args()
+
+
 def main():
-    parser = argparse.ArgumentParser(
-        description="Agentic Research Pipeline – From Research Paper (JSON/PDF) to Poster"
-    )
-    parser.add_argument(
-        "--input",
-        type=str,
-        required=True,
-        help="Path to input research paper (JSON or PDF)"
-    )
-    parser.add_argument(
-        "--config",
-        type=str,
-        default="configs/config.yaml",
-        help="Path to configuration YAML file"
-    )
-    args = parser.parse_args()
+    args = parse_args()
+    cfg_path = args.config
+    cfg = load_config(cfg_path)
+    pm = PipelineManager(config_path=cfg_path)
+    authors = [a.strip() for a in args.authors.split(";")] if args.authors else None
 
-    logger = get_logger("main")
-    logger.info("🚀 Starting Agentic Research Pipeline...")
-    logger.info(f"📄 Input file: {args.input}")
+    logger.info("Starting pipeline for %s", args.pdf)
+    poster = pm.run_pipeline(pdf_path=args.pdf, title=args.title, authors=authors, write_outputs=args.write)
 
-    # Load config
-    config = load_config(args.config)
-    os.makedirs(config["paths"]["output_dir"], exist_ok=True)
-
-    # Initialize pipeline
-    try:
-        pipeline = PipelineManager(config_path=args.config)
-
-        # Detect file type
-        if args.input.lower().endswith(".json"):
-            logger.info("🧠 Detected JSON input file.")
-            final_output = pipeline.run_pipeline(args.input, input_type="json")
-        elif args.input.lower().endswith(".pdf"):
-            logger.info("📘 Detected PDF input file.")
-            final_output = pipeline.run_pipeline(args.input, input_type="pdf")
-        else:
-            raise ValueError("❌ Unsupported file type. Please provide a .json or .pdf file.")
-
-        # Save output
-        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        output_path = os.path.join(
-            config["paths"]["output_dir"],
-            f"poster_output_{timestamp}.json"
-        )
-
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(final_output, f, indent=4, ensure_ascii=False)
-
-        logger.info("✅ Pipeline completed successfully!")
-        logger.info(f"📝 Output saved at: {output_path}")
-
-    except Exception as e:
-        logger.exception(f"❌ Pipeline execution failed: {e}")
-        sys.exit(1)
+    out_dir = pm.output_dir
+    logger.info("Pipeline completed. Outputs are in: %s", out_dir)
+    # print quick summary
+    print("Poster Title:", poster.title)
+    print("Authors:", poster.authors)
+    print("Sections:", [s.title for s in poster.sections])
+    print("Outputs:", os.path.join(out_dir, "poster.json"), os.path.join(out_dir, "poster_preview.md"))
+    if cfg.get("pipeline", {}).get("export_pptx", False):
+        print("PPTX:", os.path.join(out_dir, "poster.pptx"))
 
 
 if __name__ == "__main__":
