@@ -40,10 +40,11 @@ class SectionIdentifier:
 
     def identify_sections_from_pages(self, pages: List[Tuple[int, str]]) -> List[Section]:
         """
-        pages: list of (page_number, text) where text is OCR'd or extracted text for that page.
-        Returns a list of Section objects with approximate start/end pages and section text.
+        Identify only MAJOR academic sections (Abstract, Introduction, Methods, Experiments,
+        Results, Analysis, Ablation, Discussion, Conclusion, etc.).
+        Skip non-major sections entirely.
+        Merge adjacent 'Method' sections (e.g., 2.1 / 2.2) into one combined Method block.
         """
-        # build a single long text with page markers
         page_texts = {p: t for p, t in pages}
         merged = []
         for page_num, text in pages:
@@ -51,53 +52,123 @@ class SectionIdentifier:
             merged.append(marker + (text or ""))
         long_text = "\n".join(merged)
 
-        # Rule-based heading detection: look for lines that look like headings
+        major_headings = [
+            "abstract", "introduction", "background", "related work", "literature review",
+            "method", "methods", "methodology", "materials and methods",
+            "experiments", "experimental setup", "analysis", "results",
+            "discussion", "ablation", "conclusion", "conclusions"
+        ]
+
+        # Detect candidate headings
         headings = []
-        # candidate pattern: line is short, contains letter, may be all caps or starts with capitalized word
         for m in re.finditer(r"(^[A-Za-z][^\n]{0,120}$)", long_text, flags=re.MULTILINE):
             line = m.group(1).strip()
-            # ignore if line is part of a paragraph (heuristic: more than 8 words -> skip)
             if len(line.split()) > 8:
                 continue
-            # normalize
             norm = re.sub(r"[^A-Za-z ]", " ", line).strip().lower()
-            if norm in COMMON_HEADINGS or line.isupper() or re.match(r"^\d+(\.\d+)*\s+[A-Za-z]", line):
+            if any(re.fullmatch(rf"(\d+(\.\d+)*)?\s*{h}$", norm) for h in major_headings):
                 headings.append({"title": line.strip(), "span": m.span()})
 
-        # if no headings detected, try splitting by common headings presence
+        # Fallback search
         if not headings:
-            # search within text for common headings words
-            for hd in COMMON_HEADINGS:
-                for m in re.finditer(rf"(^|\n)\s*{re.escape(hd)}\s*(\n|:)", long_text, flags=re.IGNORECASE):
-                    headings.append({"title": hd.capitalize(), "span": m.span()})
+            for h in major_headings:
+                for m in re.finditer(rf"(^|\n)\s*{re.escape(h)}\s*(\n|:)", long_text, flags=re.IGNORECASE):
+                    headings.append({"title": h.capitalize(), "span": m.span()})
 
-        # If still no headings, fallback to chunking by pages (each page a section)
         sections = []
         if not headings:
-            logger.info("No headings found heuristically — falling back to page-wise sections")
+            logger.info("No major headings found — falling back to page-wise segmentation")
             for page_num, text in pages:
                 sections.append(Section(title=f"Page {page_num}", text=text or "", start_page=page_num, end_page=page_num))
             return sections
 
-        # Sort headings by position and extract text between headings
         headings = sorted(headings, key=lambda x: x["span"][0])
+        seen_titles = set()
         positions = [h["span"][0] for h in headings] + [len(long_text) + 1]
+
+        method_buffer = None  # temporarily hold merged method text
+        last_method_end = None
+
         for idx, h in enumerate(headings):
-            start = h["span"][1]  # after the match
+            title = h["title"].strip()
+            norm_title = re.sub(r"[^A-Za-z ]", " ", title).strip().lower()
+
+            # Identify the canonical heading type
+            base_name = next((mt for mt in major_headings if mt in norm_title), None)
+            if not base_name:
+                continue
+
+            start = h["span"][1]
             end = positions[idx + 1]
             section_text = long_text[start:end].strip()
-            # attempt to detect start_page and end_page from page markers in the chunk
             sp = self._find_page_from_text(section_text)
             ep = self._find_page_from_text(long_text[start:end])
-            sections.append(Section(title=h["title"].strip(), text=section_text, start_page=sp, end_page=ep))
 
-        # Optional LLM refinement
+            # Merge nearby Method sections
+            if base_name.startswith("method"):
+                if method_buffer is None:
+                    # start a new method section
+                    method_buffer = {
+                        "title": "Method",
+                        "text": section_text,
+                        "start_page": sp,
+                        "end_page": ep,
+                        "start_pos": start,
+                        "end_pos": end
+                    }
+                    last_method_end = end
+                else:
+                    # check proximity to last method section
+                    if (start - last_method_end) < 2000:  # within ~2k chars → merge
+                        method_buffer["text"] += "\n\n" + section_text
+                        method_buffer["end_page"] = ep
+                        method_buffer["end_pos"] = end
+                        last_method_end = end
+                    else:
+                        # far apart, finalize previous buffer
+                        sections.append(Section(
+                            title=method_buffer["title"],
+                            text=method_buffer["text"],
+                            start_page=method_buffer["start_page"],
+                            end_page=method_buffer["end_page"]
+                        ))
+                        # start new one
+                        method_buffer = {
+                            "title": "Method",
+                            "text": section_text,
+                            "start_page": sp,
+                            "end_page": ep,
+                            "start_pos": start,
+                            "end_pos": end
+                        }
+                        last_method_end = end
+                continue
+
+            # For non-method major sections — skip duplicates
+            if base_name in seen_titles:
+                continue
+            seen_titles.add(base_name)
+
+            sections.append(Section(title=title, text=section_text, start_page=sp, end_page=ep))
+
+        # flush final method buffer if any
+        if method_buffer:
+            sections.append(Section(
+                title=method_buffer["title"],
+                text=method_buffer["text"],
+                start_page=method_buffer["start_page"],
+                end_page=method_buffer["end_page"]
+            ))
+
+        # Optional LLM refinement (unchanged)
         if self.llm_verify:
             try:
                 sections = self._refine_with_llm(sections)
             except Exception as e:
                 logger.warning("LLM refine failed, using heuristic sections: %s", e)
 
+        if not sections:
+            logger.info("No recognized major sections found; returning empty result.")
         return sections
 
     def _find_page_from_text(self, text: str) -> Optional[int]:
